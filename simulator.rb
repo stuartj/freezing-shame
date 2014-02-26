@@ -45,5 +45,9 @@ iterations.times do | i |
   end
 end
 
-puts "Player Wins " + (playerWins * 100 / iterations).to_s + "% of the time."
+string = "Player Wins " + (playerWins * 100 / iterations).to_s + "% of the time."
+
+get '/' do
+  string
+end
   
