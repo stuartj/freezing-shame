@@ -1,0 +1,1 @@
+web: bundle exec ruby simulator.rb -p $PORT
