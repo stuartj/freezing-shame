@@ -1,6 +1,7 @@
 
 
 require './opponent'
+require 'set'
 
 class Hero < Opponent
     
@@ -10,6 +11,8 @@ class Hero < Opponent
   attr_accessor :wisdom, :valor
   attr_accessor :feats #bitmask; generic for Virtues AND Rewards
   attr_accessor :favoured_weapon, :r_favoured_weapon
+  
+  @@cultures = Set.new
   
   def initialize
     super
@@ -22,6 +25,20 @@ class Hero < Opponent
     @wisdom = 0
     @valor = 0
     @feats = 0
+  end
+  
+  def self.cultureName
+    self.to_s
+    # implemented by subclasses if different from class name
+  end
+  
+  def self.registerCulture subclass
+    @@cultures.add subclass
+  end
+  
+  def self.cultures
+    # figure out how to do this algorithmically
+    @@cultures
   end
   
   
@@ -80,7 +97,7 @@ class Hero < Opponent
 
   def setHeart(new_heart, favoured_bonus )
     @heart = new_heart
-    @f_herat = favoured_bonus
+    @f_heart = favoured_bonus
   end
   
   def setWits(new_wits, favoured_bonus )

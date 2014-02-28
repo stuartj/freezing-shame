@@ -1,0 +1,78 @@
+!!!
+
+%script(src="http://rightjs.org/hotlink/right.js")
+%script(src="/custom.js")
+
+%html
+	%head
+		%title Middle Earth Death Match
+		%link(rel="stylesheet" href="http://yui.yahooapis.com/2.8.0r4/build/reset/reset-min.css")
+		%link(rel="stylesheet" href="css/styles.css")
+		
+		@@index
+		%form#reverse(action="/reverse" method="POST")
+			%input#word(type="text" name="word")
+			%input(type="submit" value="Reverse")
+		%ul
+			%li <a id="server" href="/response">Call server-side Function</a>
+			%li <a id="time" href="/time">Get the time</a>
+			%li <a id="amazing" href="#">Toggle Title</a>
+	%body
+		#wrapper
+			#header
+				%h1 Middle Earth Death Match
+			
+			#content
+			
+			#hero
+				%h1 Hero
+				
+				<table border=0 padding=5>
+				<tr><td width=150>Name:</td><td>
+				= @b.name
+				</td></tr>
+				
+				<tr><td width=150>Body:</td><td>
+				= @b.body.to_s + " (" + (@b.f_body + @b.body).to_s + ")"
+				</td></tr>
+
+				<tr><td width=150>Heart:</td><td>
+				= @b.heart.to_s + " (" + (@b.f_heart + @b.heart).to_s + ")"
+				</td></tr>
+
+				<tr><td width=150>Wits:</td><td>
+				= @b.wits.to_s + " (" + (@b.f_wits + @b.wits).to_s + ")"
+				</td></tr>
+
+				<tr><td width=150>Endurance:</td><td>
+				= @b.endurance
+				</td></tr>
+
+				<tr><td width=150>Fatigue:</td><td>
+				= @b.fatigue
+				</td></tr>
+
+				<tr><td width=150>Weapon:</td><td>
+				= @b.weapon.name
+				</td></tr>
+
+				<tr><td width=150>Weapon Skill:</td><td>
+				= @b.weapon_skill
+				</td></tr>
+
+				<tr><td width=150>Armor:</td><td>
+				= @b.armor.name
+				</td></tr>
+
+				<tr><td width=150>Helm:</td><td>
+				= @b.helm.name
+				</td></tr>
+
+				<tr><td width=150>Shield:</td><td>
+				= @b.shield.name
+				</td></tr>
+
+				</table>
+				
+			#monster
+			

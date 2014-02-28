@@ -1,10 +1,11 @@
 require 'sinatra'
+require 'haml'
 
 Dir["./monsters/*"].each {|file| require file }
 Dir["./heroes/*"].each {|file| require file }
 
-
 def fight( opponent1, opponent2 )
+  
   opponent1.reset
   opponent2.reset
   
@@ -22,32 +23,63 @@ def fight( opponent1, opponent2 )
   rounds # return the number of rounds it took
 end
 
-o = Orc.chieftan
-b = Beorning.spearman
 
-o.reset
-b.reset
-
-playerWins = 0
-iterations = 100
-iterations.times do | i |
-  puts "\n#" + i.to_s + "\n"
-  if( i % 2 == 0 )
-    fight(o,b)
-  else
-    fight(b,o)
-  end
-  [o,b].each do | p |
-    puts p.name + (p.alive? ? (" wins with " + (p.endurance * 100 / p.maxEndurance).to_s + "% health.") : " dies.")
-  end
-  if b.alive?
-    playerWins+=1
-  end
+get '/index' do
+  @foo = "bar"
+  erb :index
 end
-
-string = "Player Wins " + (playerWins * 100 / iterations).to_s + "% of the time."
 
 get '/' do
-  string
+  @o = Orc.chieftan
+  @b = Beorning.spearman
+
+  @o.reset
+  @b.reset
+
+  playerWins = 0
+  iterations = 100
+  iterations.times do | i |
+    "\n#" + i.to_s + "\n"
+    if( i % 2 == 0 )
+      fight(@o,@b)
+    else
+      fight(@b,@o)
+    end
+    [@o,@b].each do | p |
+      p.name + (p.alive? ? (" wins with " + (p.endurance * 100 / p.maxEndurance).to_s + "% health.") : " dies.")
+    end
+    if @b.alive?
+      playerWins+=1
+    end
+  end
+  
+  haml :index
+
+#  "Player Wins " + (playerWins * 100 / iterations).to_s + "% of the time."
+
 end
+
+# get('/'){ haml :index }
+get('/response'){  "Hello from the server" }
+get('/time'){ "The time is " + Time.now.to_s }
+
+post('/chooseculture') do
+  puts "Choose culture fired!"
+  params[:culture]
+  #"[Foo, Bar, Baz]"
+end
+
+post('setculture') do
+  params[:culture]
+end
+
+=begin 
+post('/sethero') do
+  hero = Object::const_get(params[:culture])
+  hero.Class.to_s
+  "test"
+end
+=end
+post('/reverse'){ params[:word].reverse }
+
   

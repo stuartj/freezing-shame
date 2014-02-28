@@ -1,0 +1,46 @@
+!!!
+
+%script(src="http://rightjs.org/hotlink/right.js")
+%script(src="/custom.js")
+
+%html
+	%head
+		%title Middle Earth Death Match
+		%link(rel="stylesheet" href="http://yui.yahooapis.com/2.8.0r4/build/reset/reset-min.css")
+		%link(rel="stylesheet" href="css/styles.css")
+		
+		@@index
+		%form#reverse(action="/reverse" method="POST")
+			%input#word(type="text" name="word")
+			%input(type="submit" value="Reverse")
+		%ul
+			%li <a id="server" href="/response">Call server-side Function</a>
+			%li <a id="time" href="/time">Get the time</a>
+			%li <a id="amazing" href="#">Toggle Title</a>
+	%body
+		#wrapper
+			#header
+				%h1 Middle Earth Death Match
+			
+			#content
+			
+			#hero
+				%h1 Hero
+				%form#chooseculture(action="/chooseculture" method="POST")
+					%select#chooseculture(name="culture" onchange='submit_button.click()')
+						- Hero.cultures.each do | c |
+							%option{ :value => "#{c.to_s}" }
+								="#{c.cultureName}"
+					%input#submit_button(type="submit" style="visibility:hidden")
+					
+				%form#sethero(action="/sethero" method="POST")
+					- ["A","B","C"].each do | v |
+						%input(type="checkbox" value="#{v}")
+							="#{v}"
+					
+				#herosheet
+					= haml(:herosheet, :layout => false, :locals => {:culture => Beorning })
+				
+				
+			#monster
+			

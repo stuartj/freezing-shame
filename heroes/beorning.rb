@@ -2,6 +2,8 @@ require './hero'
 
 class Beorning < Hero
   
+  superclass.registerCulture self
+    
   def initialize
     super
     puts "Beorning initalizing"
@@ -14,6 +16,18 @@ class Beorning < Hero
   def self.rewards #modifiers applied to gear
     super + [:giant_slaying_spear, :noble_armor, :splitting_axe] 
   end
+  
+  def self.backgrounds
+    result = Hash.new
+    result["Child of Two Folk"] = {:body => 6, :heart => 6, :wits => 2}
+    result["Errand-rider"] = {:body => 7, :heart => 5, :wits => 2}
+    result["Head of the Family"] = {:body => 6, :heart => 4, :wits => 4}
+    result["Light-foot"] = {:body => 5, :heart => 5, :wits => 4}
+    result["Keeper of Tales"] = {:body => 6, :heart => 5, :wits => 3}
+    result["Voice from the Past"] = {:body => 7, :heart => 4, :wits => 3}
+    result
+  end
+  
   
   
   def isWeary

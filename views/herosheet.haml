@@ -1,0 +1,6 @@
+%form#makehero(action="/makehero" method="POST")
+	%select#choosebackground(name="choosebackground" onchange='submit_button.click()')
+		- Hero.cultures.each do | c |
+			%option{ :value => "#{c.to_s}" }
+				= c.to_s
+	%input#submit_button(type="submit" style="visibility:hidden")

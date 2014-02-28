@@ -1,0 +1,32 @@
+#wrapper{
+	width:66%
+	margin:auto;
+}
+
+select{
+	margin:12px 0;
+	float:center;
+}
+
+#header{
+	background-color:#ade;
+	text-align:center;
+}
+
+
+
+#hero{
+	margin:12px 0;
+	width :30%;
+	float:left;
+	background-color:#ddd;
+}
+
+#monster{
+	margin:12px 0;
+	width :30%;
+	float:right;
+	background-color:#ddd;
+}
+
+
