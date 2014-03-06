@@ -1,0 +1,54 @@
+%form#weapons(action="/setweapons" method="POST")
+	-heroclass=(Object.const_get(culture))
+	-weapons = heroclass.weapons params.keys.collect{|key|key.to_sym}
+	-params.keys.each do |key|
+		%input{:type=>"hidden", :name=>key, :value=>locals[key]}
+	%fieldset.radiobuttons
+		%legend Weapon Skill
+		%table#weapon_skill(name="WeaponSkill")
+			%body
+				%tr
+					-6.times do |i|
+						%td
+							%input{:type=>"radio", :value=> i+1, :name=>"weapon_skill"}
+				%tr
+					-6.times do |i|
+						%td
+							=(i+1).to_s
+	%fieldset.dropdown
+		%legend 
+			Weapon
+		%select#background(name="weapon")
+			-weapons.keys.each do | v |
+				%option{ :value => "#{v}" }
+					= weapons[v].name	
+	%fieldset.dropdown
+		%legend 
+			Armor
+		-armors=heroclass.gear.keep_if {|k,v| v.is_a? Armor }
+		%select#background(name="armor")
+			-armors.keys.each do | v |
+				%option{ :value => "#{v}" }
+					= armors[v].name	
+
+	%fieldset.dropdown
+		%legend 
+			Shield
+		-shields=heroclass.gear.keep_if {|k,v| v.is_a? Shield }
+		%select#background(name="shield")
+			-shields.keys.each do | v |
+				%option{ :value => "#{v}" }
+					= shields[v].name	
+
+	%fieldset.dropdown
+		%legend 
+			Helm
+		-helms=heroclass.gear.keep_if {|k,v| v.is_a? Helm }
+		%select#background(name="helm")
+			-helms.keys.each do | v |
+				%option{ :value => "#{v}" }
+					= helms[v].name	
+
+
+	%input#submit_button(type="submit" style="visibility:hidden")
+	

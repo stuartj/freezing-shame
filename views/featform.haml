@@ -1,0 +1,74 @@
+%form#setfeats(action="/setfeats" method="POST")
+	-heroclass=(Object.const_get(culture))
+	%input{ :type => "hidden", :name => "culture", :value => culture }
+	%input{ :type => "hidden", :name => "background", :value => background }
+	%fieldset
+		%legend 
+			Attributes
+		%table
+			%body
+				%tr
+					%td.attr
+					%td.attr
+					%td.attr
+						+3
+					%td.attr
+						+2
+					%td.attr
+						+1
+				%tr
+					%td.attr
+						Body:
+					%td.attr
+						=heroclass.backgrounds[background.to_sym][:body].to_s
+					%td.attr
+						%input{ :type => "radio", :name => "favoured3" }
+					%td.attr
+						%input{ :type => "radio", :name => "favoured2" }
+					%td.attr
+						%input{ :type => "radio", :name => "favoured1" }
+				%tr
+					%td.attr
+						Body:
+					%td.attr
+						=heroclass.backgrounds[background.to_sym][:heart].to_s
+					%td.attr
+						%input{ :type => "radio", :name => "favoured3" }
+					%td.attr
+						%input{ :type => "radio", :name => "favoured2" }
+					%td.attr
+						%input{ :type => "radio", :name => "favoured1" }					
+				%tr
+					%td.attr
+						Body:
+					%td.attr
+						=heroclass.backgrounds[background.to_sym][:wits].to_s
+					%td.attr
+						%input{ :type => "radio", :name => "favoured3" }
+					%td.attr
+						%input{ :type => "radio", :name => "favoured2" }
+					%td.attr
+						%input{ :type => "radio", :name => "favoured1" }	
+	%fieldset.checkboxes
+		%legend Virtues
+		%table#virtues(name="Virtues" class="culture_choices")
+			%body
+				- heroclass.virtues.each do | v |
+					%tr
+						%td
+							%input{:type=>"checkbox", :onchange=>"submit_button.click()", :name=>v}
+						%td= v.to_s.capitalize.gsub(/_/,' ')
+	%fieldset.checkboxes
+		%legend Rewards
+		%table#rewards(name="Rewards")
+			%body
+				- heroclass.rewards.each do | v |
+					%tr
+						%td
+							%input{:type=>"checkbox", :onchange=>"submit_button.click()", :name=>v}
+						%td= v.to_s.capitalize.gsub(/_/,' ')
+	%input#submit_button(type="submit" style="visibility:hidden")
+	
+
+
+

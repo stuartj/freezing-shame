@@ -1,0 +1,14 @@
+%form#setbackground(action="/setbackground" method="POST")
+	-heroclass=(Object.const_get(culture))
+	%label
+		Background:
+	%select#background(name="background" onchange='submit_button.click()')
+		-heroclass.backgrounds.keys.each do | key |
+			%option{ :value => "#{key}" }
+				= heroclass.backgrounds[key][:name]
+	%input{:type=>"hidden", :value=>culture, :name=>:culture}
+	%input#submit_button(type="submit" style="visibility:hidden")
+	
+
+
+

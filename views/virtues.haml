@@ -1,0 +1,7 @@
+%table#feats
+	%body
+		- ["Alpha","Beta","Delta", "Gamma"].each do | v |
+			%tr
+				%td
+					%input(type="checkbox" class="checkbox" value="#{v}")
+				%td= v

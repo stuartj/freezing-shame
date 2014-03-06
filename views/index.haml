@@ -25,22 +25,26 @@
 			#content
 			
 			#hero
-				%h1 Hero
-				%form#chooseculture(action="/chooseculture" method="POST")
-					%select#chooseculture(name="culture" onchange='submit_button.click()')
+				%h1.center Hero
+				%form#setculture(action="/setculture" method="POST")
+					%label
+						Culture:
+					%select#culture(name="culture" onchange='submit_button.click()')
 						- Hero.cultures.each do | c |
 							%option{ :value => "#{c.to_s}" }
 								="#{c.cultureName}"
 					%input#submit_button(type="submit" style="visibility:hidden")
 					
-				%form#sethero(action="/sethero" method="POST")
-					- ["A","B","C"].each do | v |
-						%input(type="checkbox" value="#{v}")
-							="#{v}"
+				#backgroundform
+					= partial :backgroundform, :layout => false, :locals => {:culture => "Barding"}
 					
-				#herosheet
-					= haml(:herosheet, :layout => false, :locals => {:culture => Beorning })
+				#featform
+					= partial :featform, :layout => false, :locals => {:culture => "Barding", :background => "dragon_eyed"}
+					
+				#weaponform
+					= partial :weaponform, :layout => false, :locals => {:culture =>"Barding"}
 				
 				
 			#monster
 			
+//					= haml(:herosheet, :layout => false, :locals => {:culture => Beorning })
