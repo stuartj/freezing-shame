@@ -1,5 +1,5 @@
 require 'sinatra'
-require 'sinatra/partial'
+# require 'sinatra/partial'
 require 'haml'
 
 Dir["./monsters/*"].each {|file| require file }
