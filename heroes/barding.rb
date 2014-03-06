@@ -16,18 +16,22 @@ class Barding < Hero
     super + [:birthright, :fierce_shot, :kings_men, :swordmaster, :woeful_foresight ] 
   end
   
-  def self.rewards #modifiers applied to gear
-    super + [:daling_longbow, :spear_of_king_bladorthin, :tower_shield] 
+  def self.rewards #
+    super + [:dalish_longbow, :spear_of_king_bladorthin, :tower_shield] 
+  end
+  
+  def self.weapons filter=nil
+    super
   end
   
   def self.backgrounds
     result = Hash.new
-    result["By Hammer and Anvil"] = {:body => 5, :heart => 7, :wits => 2}
-    result["Wordweaver"] = {:body => 4, :heart => 6, :wits => 4}
-    result["Gifted Senses"] = {:body => 6, :heart => 6, :wits => 2}
-    result["Healing Hands"] = {:body => 4, :heart => 7, :wits => 3}
-    result["Dragon-eyed"] = {:body => 5, :heart => 6, :wits => 3}
-    result["Patient Hunter"] = {:body => 5, :heart => 5, :wits => 4}
+    result[:by_hammer_and_anvil] = {:name => "By Hammer and Anvil", :body => 5, :heart => 7, :wits => 2}
+    result[:word_weaver] = {:name => "Wordweaver", :body => 4, :heart => 6, :wits => 4}
+    result[:gifted_sense] = {:name => "Gifted Senses", :body => 6, :heart => 6, :wits => 2}
+    result[:healing_hands] = {:name => "Healing Hands", :body => 4, :heart => 7, :wits => 3}
+    result[:dragon_eyed] = {:name => "Dragon-eyed", :body => 5, :heart => 6, :wits => 3}
+    result[:patient_hunter] = {:name => "Patient Hunter", :body => 5, :heart => 5, :wits => 4}
     result
   end
   

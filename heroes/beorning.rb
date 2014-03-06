@@ -1,5 +1,30 @@
 require './hero'
 
+class GiantSlayingSpear < Weapon
+  def initialize
+    g = Beorning.weapons[:great_spear]
+    super( g.name, g.damage, g.edge, g.injury, g.encumbrance, g.called_shot_effect)
+    @name = "Giant Slaying Spear"
+  end
+  
+  def self.to_sym
+    :giant_slaying_spear
+  end
+end
+
+class NobleArmor < Armor
+  def self.to_sym
+    :noble_armor
+  end
+end
+
+class SplittingAxe < Weapon
+  def self.to_sym
+    :splitting_axe
+  end
+end
+
+
 class Beorning < Hero
   
   superclass.registerCulture self
@@ -13,18 +38,37 @@ class Beorning < Hero
     super + [:brothers_to_bears, :night_goer, :skin_coat, :great_strength, :twice_baked_honey_cakes ] 
   end
   
+  def self.culturalEquipment
+    result = {}
+    [GiantSlayingSpear, NobleArmor, SplittingAxe].each do | x |
+      result[x.to_sym] = x
+    end
+    result
+  end
+  
   def self.rewards #modifiers applied to gear
-    super + [:giant_slaying_spear, :noble_armor, :splitting_axe] 
+    super + culturalEquipment.keys 
   end
   
   def self.backgrounds
     result = Hash.new
-    result["Child of Two Folk"] = {:body => 6, :heart => 6, :wits => 2}
-    result["Errand-rider"] = {:body => 7, :heart => 5, :wits => 2}
-    result["Head of the Family"] = {:body => 6, :heart => 4, :wits => 4}
-    result["Light-foot"] = {:body => 5, :heart => 5, :wits => 4}
-    result["Keeper of Tales"] = {:body => 6, :heart => 5, :wits => 3}
-    result["Voice from the Past"] = {:body => 7, :heart => 4, :wits => 3}
+    result[:child_of_two_folk] = {:name => "Child of Two Folk", :body => 6, :heart => 6, :wits => 2}
+    result[:errand_rider] = {:name => "Errand-rider", :body => 7, :heart => 5, :wits => 2}
+    result[:head_of_the_family] = {:name => "Head of the Family", :body => 6, :heart => 4, :wits => 4}
+    result[:light_foot] = {:name => "Light-foot", :body => 5, :heart => 5, :wits => 4}
+    result[:keeper_of_tales] = {:name => "Keeper of Tales", :body => 6, :heart => 5, :wits => 3}
+    result[:voice_from_the_past] = {:name => "Voice from the Past", :body => 7, :heart => 4, :wits => 3}
+    result
+  end
+  
+  def self.weapons filter = nil 
+    result = super filter
+    if filter.is_a? Array
+      puts filter
+      if filter.include? :giant_slaying_spear  
+        result[:giant_slaying_spear] = GiantSlayingSpear.new
+      end
+    end
     result
   end
   
