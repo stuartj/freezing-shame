@@ -9,7 +9,7 @@ class Hero < Opponent
   attr_accessor :f_body, :f_wits, :f_heart # favoured value bonus (e.g., delta, not total)
   attr_accessor :fatigue, :stance
   attr_accessor :wisdom, :valor
-  attr_accessor :feats #bitmask; generic for Virtues AND Rewards
+  attr_accessor :virtues #bitmask; generic for Virtues AND Rewards
   attr_accessor :favoured_weapon, :r_favoured_weapon
   
   @@cultures = Set.new
@@ -24,7 +24,7 @@ class Hero < Opponent
     @stance = 9
     @wisdom = 0
     @valor = 0
-    @feats = 0
+    @virtues = Set.new
   end
   
   def self.cultureName
@@ -42,7 +42,7 @@ class Hero < Opponent
   end
   
   
-  def self.weapons
+  def self.weapons filter = nil
     result = super
     result[:dagger] = Weapon.new( "Dagger", 3, 12, 12, 0, nil );
     result[:short_sword] = Weapon.new( "Short Sword", 5, 10, 14, 1, nil)
@@ -61,7 +61,13 @@ class Hero < Opponent
   end
   
 
+  def hasVirtue? virtue
+    @virtues.include? virtue
+  end
   
+  def addVirtue virtue
+    @virtues.add virtue
+  end
   # 
   def self.enduranceBase
     0 # implemented by subclasses
@@ -80,7 +86,7 @@ class Hero < Opponent
   end
   
   def maxEndurance
-    super + ((self.hasFeat? :resilience) ? 2 : 0)
+    super + ((self.hasVirtue? :resilience) ? 2 : 0)
   end
   
   
@@ -144,38 +150,7 @@ class Hero < Opponent
     # now modify character or gear, when appropriate...
   end
   
-  def maskValueFor symbol
-    symbols = self.class.featList
-    if !symbols.include? symbol
-      return 0
-    end
-    return 2 ** (symbols.index symbol)
-  end
-  
-  def hasFeat? symbol
-    mask = self.maskValueFor symbol
-    @feats & mask
-  end
-  
-  def applyFeat symbol
-    case symbol
-    when :fell_handed
-      @weapon.damage = @weapon.damage + 1
-    when :dour_handed
-      @r_weapon.damage = @r_weapon.damage + 1
-    when :gifted
-      # increases a favoured attribute by 1; NYI
-    when :resilience
-      # handled in maxStamina
-    when :cunning_make
-      # this one is tricky; needs a second argument...shit I need to give weapons attributes
-    else
-      return false # used for testing that all symbols are accounted for
-    end
-    return true # symbol argument was found
-  end
-
-  
+ 
   def self.sample
     h = Hero.new
     h.parry = 3

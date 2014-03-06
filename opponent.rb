@@ -32,7 +32,11 @@ class Opponent
     #NYI
   end
   
-  def self.weapons
+  def weapons
+    return self.class.weapons
+  end
+  
+  def self.weapons filter = nil
     return Hash.new
   end
   
@@ -64,8 +68,11 @@ class Opponent
     [] #array of symbols; implemented by sub-classes
   end
   
-  def self.armors
+  def self.gear filter = nil
     result = Hash.new
+    result[:no_shield] = Shield.new("None", 0, 0)
+    result[:no_helm] = Helm.new("None", 0, 0)
+    result[:no_armor] = Armor.new("None", 0, 0)
     result[:leather_shirt] = Armor.new("Leather shirt", 1, 4)
     result[:leather_corslet] = Armor.new("Leather corslet", 2, 8)
     result[:mail_shirt] = Armor.new("Mail shirt", 3, 12)
@@ -79,6 +86,18 @@ class Opponent
     return result
   end
   
+  def self.shields filter = nil
+    self.gear.keep_if {|k,v| v.class == Shield }
+  end
+
+  def self.helms filter = nil
+    self.gear.keep_if {|k,v| v.class == Helm }
+  end
+  
+  def self.armors filter = nil
+    self.gear.keep_if {|k,v| v.class == Armor }
+  end
+
   def self.armorForSymbol aSymbol
     list = self.armors
     if list.include? aSymbol 
@@ -180,9 +199,9 @@ class Opponent
     0 #overridden by subclasss
   end
   
-  def resistPierce tn
-    self.dice.roll( @armor.value + @helm.value )
-    if !@dice.test tn
+  def rollProtectionAgainst opponent
+    self.dice.roll( @armor.value + @helm.value, self.weary?, opponent.weapon.rollModifier )
+    if !@dice.test weapon.injury
       self.wound
     end
   end
@@ -210,9 +229,23 @@ class Opponent
   
   
   
-  def takeDamage amount
-    @endurance -= amount
-    puts self.name + " takes " + amount.to_s + " damage (" + @endurance.to_s + " left)"
+  def getHitBy opponent
+    damage = opponent.weapon.damage
+    opponent.dice.tengwars.times do
+      damage += opponent.damageBonus
+    end
+    @endurance -= damage
+    puts self.name + " takes " + damage.to_s + " damage (" + @endurance.to_s + " left)"
+    
+    if opponent.dice.feat >= opponent.weapon.edge
+      if true
+        puts "Piercing Blow!"
+      end
+      self.rollProtectionAgainst( opponent )
+      if true
+        puts @name + " rolls " + @dice.to_s + " and is" + ((opponent.dice.test opponent.weapon.injury) ? " not" : "") + " wounded"
+      end     
+    end
   end
   
   def rally
@@ -226,25 +259,26 @@ class Opponent
     end
     
     if( @dice.test( opponent.tn self ) )
-      damage = @weapon.damage   
+      opponent.getHitBy self 
+#      damage = @weapon.damage   
       #bonus damage
-      @dice.tengwars.times do
-        damage += self.damageBonus
-      end      
-      opponent.takeDamage damage
+#      @dice.tengwars.times do
+#        damage += self.damageBonus
+#      end      
+#      opponent.takeDamage damage
 #      puts opponent.name + " takes " + damage.to_s + " damage"      
       #piercing check
-      if @dice.feat >= @weapon.edge  
-        if verbose
-          puts "Piercing blow!" 
-        end        
+#      if @dice.feat >= @weapon.edge  
+#        if verbose
+#          puts "Piercing blow!" 
+#        end        
         
-        opponent.resistPierce( @weapon.injury )
+#        opponent.rollProtectionAgainst( @weapon )
   
-        if verbose
-          puts opponent.name + " rolls " + opponent.dice.to_s + " and is" + ((@dice.test @weapon.injury) ? " not" : "") + " wounded"
-        end
-      end
+#        if verbose
+#          puts opponent.name + " rolls " + opponent.dice.to_s + " and is" + ((@dice.test @weapon.injury) ? " not" : "") + " wounded"
+#        end
+#      end
     end
     
     #if piercing, roll armor

@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/partial'
 require 'haml'
 
 Dir["./monsters/*"].each {|file| require file }
@@ -37,7 +38,7 @@ get '/' do
   @b.reset
 
   playerWins = 0
-  iterations = 100
+  iterations = 1
   iterations.times do | i |
     "\n#" + i.to_s + "\n"
     if( i % 2 == 0 )
@@ -63,14 +64,23 @@ end
 get('/response'){  "Hello from the server" }
 get('/time'){ "The time is " + Time.now.to_s }
 
-post('/chooseculture') do
-  puts "Choose culture fired!"
-  params[:culture]
+post('/setculture') do
+  puts "Set culture fired!"
+  puts params
+  partial( :backgroundform, :layout => false, :locals => {:culture=>params[:culture], :params=>params } )
   #"[Foo, Bar, Baz]"
 end
 
-post('setculture') do
-  params[:culture]
+post('/setbackground') do
+  puts "Set backbround fired!"
+  puts "Background: " + params.to_s
+  partial( :featform, :layout => false, :locals => { :background => params[:background], :culture => params[:culture], :params => params} )
+end
+
+post('/setfeats') do
+  puts "Set feats fired!"
+  puts "Feats: " + params.to_s
+  partial( :weaponform, :layout => false, :locals => {:culture => params[:culture], :params => params} )
 end
 
 =begin 

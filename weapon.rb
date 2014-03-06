@@ -12,12 +12,31 @@ class Weapon < Equipment
   
   attr_accessor :name, :damage, :edge, :injury, :encumbrance, :called_shot_effect
   
+  #need to add something about ranged or melee? and how it is being used if either?
+
   def initialize( name, damage, edge, injury, encumbrance, called_shot_effect )
     super( name, encumbrance )
     @damage = damage
     @edge = edge
     @injury = injury
     @called_shot_effect = called_shot_effect
+  end
+  
+  # use this for cloning equipment
+  def clone( base_weapon )
+    super( base_weapon )
+    @damage = base_weapon.damage
+    @edge = base_weapon.edge
+    @injury = base_weapon.injury
+    @called_shot_effect = base_weapon.called_shot_effect
+  end
+  
+  def rollModifier
+    if( @qualities.include? :dalish_longbow)
+      return -1
+    end
+    0
+    # have to update this for different special weapons
   end
   
   def self.fist
@@ -35,5 +54,4 @@ class Weapon < Equipment
   def injury
     (@qualities.include? :fell) ? @injury + 2 : @injury
   end
-
 end

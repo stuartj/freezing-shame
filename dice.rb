@@ -1,6 +1,6 @@
 class Dice
   
-  attr_accessor :total, :sauron, :gandalf, :tengwars, :feat
+  attr_accessor :total, :sauron, :gandalf, :tengwars, :feat, :bonus
   
   def initialize
     self.reset
@@ -11,6 +11,7 @@ class Dice
     @sauron = false
     @total = 0
     @feat = 0
+    @bonus = 0
     @tengwars = 0
     @rolls = []
   end
@@ -39,7 +40,7 @@ class Dice
   def test( tn )
     if @sauron
       return false
-    elsif @gandalf || @total >= tn
+    elsif @gandalf || (@total + @bonus) >= tn
       return true
     else
       return false
@@ -47,17 +48,18 @@ class Dice
     false
   end
   
-  def roll(dice, weary=false, mod=0)
+  def roll(dice, weary=false, advantage=0, bonus=0)
     self.reset
     @feat = rand(12) + 1
+    @bonus = bonus
     
 #    puts "Mod :" + mod.to_s
 
     # options == 1 means roll feat twice take highest, options == -1 means take lowest
-    if mod != 0
+    if advantage != 0
       feat2 = rand(12) + 1
       puts "Feat2: " + feat2.to_s
-      if mod < 0 
+      if advantage < 0 
         @feat = [@feat,feat2].min
       else
         @feat = [@feat,feat2].max

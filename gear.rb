@@ -25,6 +25,12 @@ class Gear < Equipment
     @value = value # prot for armor and helms, parry for shields
   end
   
+  # use this for cloning equipment
+  def clone( base_gear )
+    super( base_gear )
+    @value = base_weapon.value
+  end
+  
 end
 
 class Protection < Gear
@@ -62,6 +68,13 @@ class Shield < Gear
     end
     @value
   end
+  
+  # use this for cloning equipment
+  def clone( base_shield )
+    super( base_shield )
+    @is_broken = false
+  end
+  
   
   def initialize( name, value, encumbrance )
     super

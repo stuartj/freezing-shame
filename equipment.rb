@@ -12,8 +12,19 @@ class Equipment
     @qualities = Set.new # ahhhh....forget bit masks and just keep an array
   end
   
+  # use this for cloning equipment
+  def clone( base_item )
+    @name = base_weapon.name
+    @encumbrance = base_weapon.encumbrance
+  end
+  
+  
   def applyQuality( symbol ) 
     qualities.add symbol
   end    
+  
+  def self.to_sym
+    :equipment
+  end
   
 end
