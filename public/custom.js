@@ -8,7 +8,7 @@
   $('monster').load("/response");
 });
 
-"#sethero".onSubmit(function(event) {
+"#makehero".onSubmit(function(event) {
 	event.stop()
 	this.send({
 		onSuccess: function() {
@@ -16,21 +16,29 @@
 	});
 });
 
-"#chooseculture".onSubmit(function(event) {
+"#setculture".onSubmit(function(event) {
 	event.stop()
 	this.send({
 		onSuccess: function() {
-			$('monster').update(this.responseText);
-			var s = document.getElementById("choosebackground");
-			for(var i=s.length-1;i>=0;i--){
-				s.remove(i);
-			}
-//			var a = JSON.parse('["One", "Two", "Three"]');
-			for (var i=0;i<5;i++){
-				var option = document.createElement("option");
-				option.text = "Test " + i;
-				s.add(option);
-			}
+			$('backgroundform').update(this.responseText);
+		}
+	});
+});
+
+"#setbackground".onSubmit(function(event) {
+	event.stop()
+	this.send({
+		onSuccess: function() {
+			$('featform').update(this.responseText);
+		}
+	});
+});
+
+"#setfeats".onSubmit(function(event) {
+	event.stop()
+	this.send({
+		onSuccess: function() {
+			$('weaponform').update(this.responseText);
 		}
 	});
 });
