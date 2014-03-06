@@ -16,39 +16,19 @@
 						+2
 					%td.attr
 						+1
-				%tr
-					%td.attr
-						Body:
-					%td.attr
-						=heroclass.backgrounds[background.to_sym][:body].to_s
-					%td.attr
-						%input{ :type => "radio", :name => "favoured3" }
-					%td.attr
-						%input{ :type => "radio", :name => "favoured2" }
-					%td.attr
-						%input{ :type => "radio", :name => "favoured1" }
-				%tr
-					%td.attr
-						Body:
-					%td.attr
-						=heroclass.backgrounds[background.to_sym][:heart].to_s
-					%td.attr
-						%input{ :type => "radio", :name => "favoured3" }
-					%td.attr
-						%input{ :type => "radio", :name => "favoured2" }
-					%td.attr
-						%input{ :type => "radio", :name => "favoured1" }					
-				%tr
-					%td.attr
-						Body:
-					%td.attr
-						=heroclass.backgrounds[background.to_sym][:wits].to_s
-					%td.attr
-						%input{ :type => "radio", :name => "favoured3" }
-					%td.attr
-						%input{ :type => "radio", :name => "favoured2" }
-					%td.attr
-						%input{ :type => "radio", :name => "favoured1" }	
+				-[:body, :heart, :wits].each do | attribute |
+					%tr
+						%td.attr
+							=attribute.to_s.capitalize
+						%td.attr
+							-bckgnd = heroclass.backgrounds[background.to_sym]
+							=(bckgnd != nil) ? bckgnd[attribute].to_s : "0"
+						%td.attr
+							%input{ :type => "radio", :name => "favoured3" }
+						%td.attr
+							%input{ :type => "radio", :name => "favoured2" }
+						%td.attr
+							%input{ :type => "radio", :name => "favoured1" }
 	%fieldset.checkboxes
 		%legend Virtues
 		%table#virtues(name="Virtues" class="culture_choices")
