@@ -38,7 +38,7 @@ class Hero < Opponent
   
   def self.cultures
     # figure out how to do this algorithmically
-    @@cultures
+    @@cultures.sort{ |a,b| a.to_s <=> b.to_s }
   end
   
   

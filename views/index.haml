@@ -30,7 +30,7 @@
 					%label
 						Culture:
 					%select#culture(name="culture" onchange='submit_button.click()')
-						- Hero.cultures.sort.each do | c |
+						- Hero.cultures.each do | c |
 							%option{ :value => "#{c.to_s}" }
 								="#{c.cultureName}"
 					%input#submit_button(type="submit" style="visibility:hidden")
