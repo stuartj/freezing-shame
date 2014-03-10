@@ -54,3 +54,5 @@ class Orc < Monster
 
 end
 
+Monster.register Orc
+

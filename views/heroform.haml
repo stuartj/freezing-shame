@@ -2,7 +2,6 @@
 
 %form#sethero(action="/sethero" method="POST")
 	-heroclass=(Object.const_get(culture))
-	%input#submit_button(type="submit")
 	%input{:type=>"hidden", :value=>culture, :name=>:culture}
 	%label
 		Background:
@@ -117,5 +116,25 @@
 							-helms.keys.each do | v |
 								%option{ :value => "#{v}" }
 									= helms[v].name	
+									
+	%fieldset.attributes
+		%legend 
+			Opponent
+	%fieldset.attributes
+		%legend
+			Fight vs. Orc Chieftan
+		%label 
+			Iterations
+		%select{ :name => "iterations"}
+			-5.times do |i|
+				%option{ :value => 10**i }
+					=(10**i).to_s
+	%input#submit_button(type="submit")
+	
+-#		%select{}
+-#			-Monster.allMonsters.keys.each do |key|
+-#				%option{ :value => "#{key}" }
+-#					= Monster.allMonsters[key]
+
 
 	

@@ -1,0 +1,7 @@
+%select#monstertype
+	-types=(Object.const_get(monster)).types
+	-types.keys.each do |key|
+		%option{ :value => key }
+			= types[key][:name]
+			
+		

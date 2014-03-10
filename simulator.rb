@@ -6,7 +6,7 @@ require 'haml'
 Dir["./monsters/*"].each {|file| require file }
 Dir["./heroes/*"].each {|file| require file }
 
-def fight( opponent1, opponent2 )
+def fight( opponent1, opponent2, resultString )
   
   opponent1.reset
   opponent2.reset
@@ -17,22 +17,25 @@ def fight( opponent1, opponent2 )
   
   while opponent1.alive? && opponent2.alive?
     rounds += 1
-    opponent1.attack( opponent2, true )
+    resultString = opponent1.attack( opponent2, resultString )
     if opponent2.alive?
-      opponent2.attack( opponent1, true )
+      resultString = opponent2.attack( opponent1, resultString )
     end
   end
-  rounds # return the number of rounds it took
+  resultString
 end
 
 def deathmatch( opponent1, opponent2, iterations )
+  resultString = nil
   playerWins = 0
   iterations.times do | i |
-    "\n#" + i.to_s + "\n"
-    if( i % 2 == 0 )
-      fight(opponent1,opponent2)
+    if i==(iterations-1)
+      resultString = ""
+    end
+    if( rand(2) == 1 )
+      resultString = fight(opponent1,opponent2,resultString)
     else
-      fight(opponent2,opponent1)
+      resultString = fight(opponent2,opponent1,resultString)
     end
     [opponent1,opponent2].each do | p |
       p.name + (p.alive? ? (" wins with " + (p.endurance * 100 / p.maxEndurance).to_s + "% health.") : " dies.")
@@ -41,7 +44,8 @@ def deathmatch( opponent1, opponent2, iterations )
       playerWins+=1
     end
   end
-  playerWins
+  resultString += "<p> Player wins: " + (playerWins * 100.0 / iterations).round(1).to_s + "%."
+  resultString
 end
 
 get '/index' do
@@ -74,12 +78,11 @@ post('/sethero') do
   params.keys.each do |key|
     puts key.to_s + "(" + key.class.to_s + ") : " + params[key]
   end
+  iterations = params[:iterations].to_i
+  puts "Iterations: " + iterations.to_s
   hero = Hero.fromParams params
   puts "Hero: " + hero.to_s
-  iterations = 10000
-  wins = deathmatch( hero, (Orc.createType :chieftan, :orc_axe), iterations )
-  puts wins
-  "Player wins: " + (wins * 100 / iterations).to_s + " percent."
+  deathmatch( hero, (Orc.createType :chieftan, :orc_axe), iterations )  
 end
 
 

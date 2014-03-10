@@ -201,9 +201,11 @@ class Opponent
   
   def rollProtectionAgainst opponent
     self.dice.roll( self.protection, self.weary?, opponent.weapon.rollModifier )
-    if !@dice.test weapon.injury
+    test = @dice.test weapon.injury
+    if !test
       self.wound
     end
+    return test
   end
   
   def protection
@@ -233,37 +235,41 @@ class Opponent
   
   
   
-  def getHitBy opponent
+  def getHitBy opponent, resultString
     damage = opponent.weapon.damage
     opponent.dice.tengwars.times do
       damage += opponent.damageBonus
     end
     @endurance -= damage
-#    puts self.name + " takes " + damage.to_s + " damage (" + @endurance.to_s + " left)"
+    if resultString
+      resultString += "<br>" + self.name + " takes " + damage.to_s + " damage (" + @endurance.to_s + " left)"
+    end
     
     if opponent.dice.feat >= opponent.weapon.edge
-      if true
-#        puts "Piercing Blow!"
+      if resultString != nil
+        puts "hello?"
+        resultString += "<br>Piercing Blow!"
       end
-      self.rollProtectionAgainst( opponent )
-      if true
-#        puts @name + " rolls " + @dice.to_s + " and is" + ((opponent.dice.test opponent.weapon.injury) ? " not" : "") + " wounded"
+      test = self.rollProtectionAgainst( opponent )
+      if resultString != nil
+        resultString += "<br>" + @name + " rolls " + @dice.to_s + " and is" + (test ? " not" : "") + " wounded"
       end     
     end
+    resultString
   end
   
   def rally
   end
   
-  def attack( opponent, verbose=false )
+  def attack( opponent, resultString )
     self.roll( @weapon_skill )
     
-    if verbose
-#      puts self.name + " attacks " + opponent.name + " and rolls " + @dice.to_s
+    if resultString != nil
+      resultString += "<br>" + self.name + " attacks " + opponent.name + " and rolls " + @dice.to_s
     end
     
     if( @dice.test( opponent.tn self ) )
-      opponent.getHitBy self 
+      resultString = opponent.getHitBy self, resultString 
 #      damage = @weapon.damage   
       #bonus damage
 #      @dice.tengwars.times do
@@ -287,6 +293,8 @@ class Opponent
     
     #if piercing, roll armor
     #if fail, deal with consequences (need to deal with Toughness)
+    
+    resultString
   end
 end
 

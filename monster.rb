@@ -9,6 +9,8 @@ require './opponent'
 
 class Monster < Opponent  
   
+  @@monsters = nil
+  
   attr_accessor :attribute_level, :parry, :hate
   attr_accessor :max_hate, :max_endurance
     
@@ -21,9 +23,20 @@ class Monster < Opponent
     @special_abilities = 0 #bit mask
   end
   
+  def self.allMonsters
+    result = {}
+    @@monsters.each do |m|
+      types = m.types
+      types.keys.each do |key|
+        result[key] = types[key]
+      end
+    end
+    result
+  end
+  
   def self.register subclass
-    if @@monsters == nil 
-      @@monsters = new Set
+    if !@@monsters 
+      @@monsters = Set.new
     end
     @@monsters.add subclass
   end
@@ -42,6 +55,14 @@ class Monster < Opponent
     m.weapon = self.weapons[weaponKey];
     m.weapon_skill = type[:weapons][weaponKey]
     m
+  end
+      
+  def weapon=(newWeapon)
+    super
+    if( @weapon.type == :attribute )
+      @weapon.damage = @attribute_level
+    end
+    weapon
   end
       
   def armor=(newArmor)

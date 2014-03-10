@@ -7,21 +7,12 @@ class Troll < Monster
     puts "Troll initializing"
   end
   
-  def weapon=(newWeapon)
-    super
-    if newWeapon == :crush
-      @weapon.damage = @attribute_level
-    end
-    @weapon
-  end
-  
-  
   
   def self.weapons
     result = super
     result[:bite] = Weapon.new( "Bite", 5, 12, 14, 0, :body, nil );
     result[:club] = Weapon.new( "Club", 6, 10, 14, 0, :one_handed, nil );
-    result[:crush] = Weapon.new( "Crush", 0, 12, 12, 0, :body, nil );
+    result[:crush] = Weapon.new( "Crush", 0, 12, 12, 0, :attribute, nil );
     result[:heavy_hammer] = Weapon.new( "Heavy hammer", 8, 12, 16, 0, :one_handed, :break_shield );
     result
   end
@@ -38,4 +29,6 @@ class Troll < Monster
   end
   
 end
+
+Monster.register Troll
 

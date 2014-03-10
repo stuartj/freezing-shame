@@ -101,6 +101,12 @@ fieldset{
 	margin:5px;
 }
 
+#output{
+	position:relative;
+	float:right;
+	width:50%;
+	height:100%;
+}
 
 
 #herosummary{

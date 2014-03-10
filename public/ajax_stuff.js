@@ -39,7 +39,7 @@
 	event.stop()
 	this.send({
 		onSuccess: function() {
-			$('herosummary').update(this.responseText);
+			$('output').update(this.responseText);
 		}
 	});
 });

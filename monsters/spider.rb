@@ -6,18 +6,10 @@ class Spider < Monster
     super
     puts "Spider initializing"
   end
-  
-  def weapon=(newWeapon)
-    super
-    if newWeapon == :sting
-      @weapon.damage = @attribute_level
-    end
-    @weapon
-  end
-    
+      
   def self.weapons
     result = super
-    result[:sting] = Weapon.new( "Sting", 0, 10, 14, 0, :body, :poison );
+    result[:sting] = Weapon.new( "Sting", 0, 10, 14, 0, :attribute, :poison );
     result
   end
   
@@ -30,4 +22,6 @@ class Spider < Monster
   end
   
 end
+
+Monster.register Spider
 
