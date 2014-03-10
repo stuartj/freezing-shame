@@ -1,0 +1,37 @@
+
+
+%form#setfeatsandbackground(action="/setfeatsandbackground" method="POST")
+	-heroclass=(Object.const_get(culture ? culture : "Barding"))
+	%label
+		Background:
+	%select#background(name="background" onchange='setattributes(this)')
+		-heroclass.backgrounds.keys.each do | key |
+		-background = heroclass.backgrounds[key]
+			%option{ :value => "#{key}", :title => "This is some title text.", :body => "#{background[:body]}", :heart => "#{background[:heart]}", :wits => "#{background[:wits]}"}
+				= background[:name] 
+	%input{:type=>"hidden", :value=>culture, :name=>:culture}
+	%input{ :type => "hidden", :name => "culture", :value => culture }
+	%fieldset.checkboxes
+		%legend Virtues
+		%table#virtues(name="Virtues" class="culture_choices")
+			%body
+				- Hero.virtues.each do | v |
+					%tr
+						%td
+							%input{:type=>"checkbox", :onchange=>"submit_button.click()", :name=>v}
+						%td= v.to_s.capitalize.gsub(/_/,' ')
+	%fieldset.checkboxes
+		%legend Rewards
+		%table#rewards(name="Rewards")
+			%body
+				- Hero.rewards.each do | v |
+					%tr
+						%td
+							%input{:type=>"checkbox", :onchange=>"submit_button.click()", :name=>v}
+						%td
+							=v.to_s.capitalize.gsub(/_/,' ')
+	%input#submit_button(type="submit" style="visibility:hidden")
+	
+
+
+

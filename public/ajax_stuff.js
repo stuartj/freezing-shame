@@ -20,21 +20,32 @@
 	event.stop()
 	this.send({
 		onSuccess: function() {
-			$('backgroundform').update(this.responseText);
+			$('herodetails').update(this.responseText);
 		}
 	});
 });
+
 
 "#setbackground".onSubmit(function(event) {
 	event.stop()
 	this.send({
 		onSuccess: function() {
-			$('featform').update(this.responseText);
+			$('weaponform').update(this.responseText);
 		}
 	});
 });
 
-"#setfeats".onSubmit(function(event) {
+"#sethero".onSubmit(function(event) {
+	event.stop()
+	this.send({
+		onSuccess: function() {
+			$('herosummary').update(this.responseText);
+		}
+	});
+});
+
+
+"#setfeatsandbackground".onSubmit(function(event) {
 	event.stop()
 	this.send({
 		onSuccess: function() {

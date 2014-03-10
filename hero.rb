@@ -27,6 +27,23 @@ class Hero < Opponent
     @virtues = Set.new
   end
   
+  def self.fromParams params
+    heroClass = (Object.const_get(params[:culture]));
+    hero = heroClass.new
+    background = hero.class.backgrounds[params[:background].to_sym]
+    hero.body = background[:body]
+    hero.heart = background[:heart]
+    hero.wits = background[:wits]
+    hero.weapon = params[:weapon].to_sym
+    hero.armor = params[:armor].to_sym
+    hero.shield = params[:shield].to_sym
+    hero.helm = params[:helm].to_sym
+    hero.weapon_skill = params[:Weapon_skill].to_i
+    hero.name = "Default Hero Name"
+    hero
+  end
+  	
+  
   def self.cultureName
     self.to_s
     # implemented by subclasses if different from class name
@@ -44,20 +61,33 @@ class Hero < Opponent
   
   def self.weapons filter = nil
     result = super
-    result[:dagger] = Weapon.new( "Dagger", 3, 12, 12, 0, nil );
-    result[:short_sword] = Weapon.new( "Short Sword", 5, 10, 14, 1, nil)
-    result[:sword] = Weapon.new("Sword", 5, 10, 16, 2, nil)
-    result[:long_sword_1] = Weapon.new("Long Sword (1H)", 5, 10, 16, 3, nil)
-    result[:long_sword_2] = Weapon.new("Long Sword (2H)", 7, 10, 18, 3, nil)
-    result[:spear] = Weapon.new("Spear", 5, 9, 14, 2, nil)
-    result[:great_spear] = Weapon.new("Great Spear", 9, 9, 16, 4, nil)
-    result[:axe] = Weapon.new("Axe", 5, 12, 18, 2, nil)
-    result[:great_axe] = Weapon.new("Great Axe", 9, 12, 20, 4, nil)
-    result[:long_hafted_axe_1] = Weapon.new("Long-hafted Axe (1H)", 5, 12, 18, 3, nil)
-    result[:long_hafted_axe_2] = Weapon.new("Long-hafted Axe (2H)", 7, 12, 20, 3, nil)
-    result[:bow] = Weapon.new("Bow", 5, 10, 14, 1, nil)
-    result[:great_bow] = Weapon.new("Great bow", 7, 10, 16, 3, nil)
-    return result
+    result[:dagger] = Weapon.new( "Dagger", 3, 12, 12, 0, :one_handed, nil );
+    result[:short_sword] = Weapon.new( "Short Sword", 5, 10, 14, 1, :one_handed, nil)
+    result[:sword] = Weapon.new("Sword", 5, 10, 16, 2, :one_handed, nil)
+    result[:long_sword_1] = Weapon.new("Long Sword (1H)", 5, 10, 16, 3, :one_handed, nil)
+    result[:long_sword_2] = Weapon.new("Long Sword (2H)", 7, 10, 18, 3, :two_handed, nil)
+    result[:spear] = Weapon.new("Spear", 5, 9, 14, 2, :versatile, nil)
+    result[:great_spear] = Weapon.new("Great Spear", 9, 9, 16, 4, :two_handed, nil)
+    result[:axe] = Weapon.new("Axe", 5, 12, 18, 2, :one_handed, nil)
+    result[:great_axe] = Weapon.new("Great Axe", 9, 12, 20, 4, :two_handed, nil)
+    result[:long_hafted_axe_1] = Weapon.new("Long-hafted Axe (1H)", 5, 12, 18, 3, :one_handed, nil)
+    result[:long_hafted_axe_2] = Weapon.new("Long-hafted Axe (2H)", 7, 12, 20, 3, :two_handed, nil)
+    result[:bow] = Weapon.new("Bow", 5, 10, 14, 1, :ranged, nil)
+    result[:great_bow] = Weapon.new("Great bow", 7, 10, 16, 3, :ranged, nil)
+    
+    if filter.is_a? Array
+      puts filter
+      gear = self.culturalEquipment
+      gear.keys.each do |key|
+        puts key
+        if (filter.include? key) && (culturalEquipment[key].superclass == Weapon )
+          puts "Key: " + key.to_s + " found!"
+          result[key] = culturalEquipment[key].new
+        end
+      end
+    end
+    
+    result
   end
   
 
@@ -160,8 +190,9 @@ class Hero < Opponent
   end
   
   def parry
-    self.wits + self.shield.value
+    self.wits + (self.weapon.allows_shield? ? self.shield.value : 0 )
   end
+  
   
   def tn opponent  # this is TN to get hit; opponent argument only there for monsters
     @stance + self.parry 

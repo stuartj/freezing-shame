@@ -200,10 +200,14 @@ class Opponent
   end
   
   def rollProtectionAgainst opponent
-    self.dice.roll( @armor.value + @helm.value, self.weary?, opponent.weapon.rollModifier )
+    self.dice.roll( self.protection, self.weary?, opponent.weapon.rollModifier )
     if !@dice.test weapon.injury
       self.wound
     end
+  end
+  
+  def protection
+    0 + (@armor ? @armor.value : 0) + (@helm ? @helm.value : 0)
   end
   
   def dice
@@ -235,15 +239,15 @@ class Opponent
       damage += opponent.damageBonus
     end
     @endurance -= damage
-    puts self.name + " takes " + damage.to_s + " damage (" + @endurance.to_s + " left)"
+#    puts self.name + " takes " + damage.to_s + " damage (" + @endurance.to_s + " left)"
     
     if opponent.dice.feat >= opponent.weapon.edge
       if true
-        puts "Piercing Blow!"
+#        puts "Piercing Blow!"
       end
       self.rollProtectionAgainst( opponent )
       if true
-        puts @name + " rolls " + @dice.to_s + " and is" + ((opponent.dice.test opponent.weapon.injury) ? " not" : "") + " wounded"
+#        puts @name + " rolls " + @dice.to_s + " and is" + ((opponent.dice.test opponent.weapon.injury) ? " not" : "") + " wounded"
       end     
     end
   end
@@ -255,7 +259,7 @@ class Opponent
     self.roll( @weapon_skill )
     
     if verbose
-      puts self.name + " attacks " + opponent.name + " and rolls " + @dice.to_s
+#      puts self.name + " attacks " + opponent.name + " and rolls " + @dice.to_s
     end
     
     if( @dice.test( opponent.tn self ) )

@@ -1,0 +1,26 @@
+%fieldset.attributes
+	%legend 
+		Attributes
+	%table
+		%body
+			%tr
+				%td.attr
+				%td.attr
+				%td.attr
+				%td.attr
+					+3
+				%td.attr
+					+2
+				%td.attr
+					+1
+			-[:body, :heart, :wits].each do | attribute |
+				%tr
+					%td.attr
+						=attribute.to_s.capitalize
+					%td.attr{ :id => "#{attribute}" }
+						0
+					%td.attr{ :id => "favoured_" + "#{attribute}" }
+						( 0 )
+					-[3,2,1].each do |i|
+						%td.attr
+							%input{ :type => "radio", :id => "#{attribute.to_s + "_" + i.to_s}", :name => ("favorured_attribute_" + i.to_s), :onchange => 'updateFavoured(this)' }

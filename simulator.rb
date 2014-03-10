@@ -25,6 +25,24 @@ def fight( opponent1, opponent2 )
   rounds # return the number of rounds it took
 end
 
+def deathmatch( opponent1, opponent2, iterations )
+  playerWins = 0
+  iterations.times do | i |
+    "\n#" + i.to_s + "\n"
+    if( i % 2 == 0 )
+      fight(opponent1,opponent2)
+    else
+      fight(opponent2,opponent1)
+    end
+    [opponent1,opponent2].each do | p |
+      p.name + (p.alive? ? (" wins with " + (p.endurance * 100 / p.maxEndurance).to_s + "% health.") : " dies.")
+    end
+    if opponent1.alive?
+      playerWins+=1
+    end
+  end
+  playerWins
+end
 
 get '/index' do
   @foo = "bar"
@@ -32,29 +50,8 @@ get '/index' do
 end
 
 get '/' do
-  @o = Orc.chieftan
-  @b = Beorning.spearman
+#  @b = Beorning.spearman
 
-  @o.reset
-  @b.reset
-
-  playerWins = 0
-  iterations = 1
-  iterations.times do | i |
-    "\n#" + i.to_s + "\n"
-    if( i % 2 == 0 )
-      fight(@o,@b)
-    else
-      fight(@b,@o)
-    end
-    [@o,@b].each do | p |
-      p.name + (p.alive? ? (" wins with " + (p.endurance * 100 / p.maxEndurance).to_s + "% health.") : " dies.")
-    end
-    if @b.alive?
-      playerWins+=1
-    end
-  end
-  
   haml :index
 
 #  "Player Wins " + (playerWins * 100 / iterations).to_s + "% of the time."
@@ -68,17 +65,31 @@ get('/time'){ "The time is " + Time.now.to_s }
 post('/setculture') do
   puts "Set culture fired!"
   puts params
-  partial( :backgroundform, :layout => false, :locals => {:culture=>params[:culture], :params=>params } )
+  partial( :heroform, :layout => false, :locals => {:culture=>params["culture"], :params=>params } )
   #"[Foo, Bar, Baz]"
 end
+
+post('/sethero') do
+  puts "Set hero fired! Values:"
+  params.keys.each do |key|
+    puts key.to_s + "(" + key.class.to_s + ") : " + params[key]
+  end
+  hero = Hero.fromParams params
+  puts "Hero: " + hero.to_s
+  iterations = 10000
+  wins = deathmatch( hero, (Orc.createType :chieftan, :orc_axe), iterations )
+  puts wins
+  "Player wins: " + (wins * 100 / iterations).to_s + " percent."
+end
+
 
 post('/setbackground') do
   puts "Set backbround fired!"
   puts "Background: " + params.to_s
-  partial( :featform, :layout => false, :locals => { :background => params[:background], :culture => params[:culture], :params => params} )
+  partial( :weaponform, :layout => false, :locals => { :background => params[:background], :culture => params[:culture], :params => params} )
 end
 
-post('/setfeats') do
+post('/setfeatsandbackground') do
   puts "Set feats fired!"
   puts "Feats: " + params.to_s
   partial( :weaponform, :layout => false, :locals => {:culture => params[:culture], :params => params} )

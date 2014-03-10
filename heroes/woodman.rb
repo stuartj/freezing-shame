@@ -20,5 +20,16 @@ class Woodman < Hero
     super + [ :bearded_axe, :feathered_armor, :shepherds_bow, :shepherds_great_bow ] 
   end
   
+  def self.backgrounds
+    result = Hash.new
+    result[:the_hound] = {:name => "The Hound", :body => 3, :heart => 4, :wits => 7}
+    result[:wizards_pupil] = {:name => "Wizard's Pupil", :body => 3, :heart => 5, :wits => 6}
+    result[:fairy_heritage] = {:name => "Fairy Heritage", :body => 4, :heart => 4, :wits => 6}
+    result[:apprentice_to_the_mountain_folk] = {:name => "Apprentice to the Mountain-folk", :body => 4, :heart => 5, :wits => 5}
+    result[:seeker] = {:name => "Seeker", :body => 2, :heart => 5, :wits => 7}
+    result[:sword_day_counsellor] = {:name => "Sword-day Counsellor", :body => 2, :heart => 6, :wits => 6}
+    result
+  end
+  
   
 end

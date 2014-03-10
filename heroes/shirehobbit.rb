@@ -25,4 +25,16 @@ class ShireHobbit < Hero
     super + [:bow_of_the_north, :kings_blade, :lucky_armor] 
   end
   
+  def self.backgrounds
+    result = Hash.new
+    result[:restless_farmer] = {:name => "Restles Farmer", :body => 3, :heart => 6, :wits => 5}
+    result[:too_many_paths_to_tread] = {:name => "Too Many Paths to Tread", :body => 4, :heart => 5, :wits => 5}
+    result[:a_good_listener] = {:name => "A Good Listener", :body => 3, :heart => 7, :wits => 4}
+    result[:witty_gentleman] = {:name => "Witty Gentleman", :body => 2, :heart => 6, :wits => 6}
+    result[:bucklander] = {:name => "Bucklander", :body => 4, :heart => 6, :wits => 4}
+    result[:tookish_blood] = {:name => "Tookish Blood", :body => 2, :heart => 7, :wits => 5}
+    result
+  end
+  
+  
 end

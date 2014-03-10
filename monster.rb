@@ -21,6 +21,64 @@ class Monster < Opponent
     @special_abilities = 0 #bit mask
   end
   
+  def self.register subclass
+    if @@monsters == nil 
+      @@monsters = new Set
+    end
+    @@monsters.add subclass
+  end
+  
+  def self.createType typeSymbol, weapon=nil
+    type = self.types[typeSymbol]
+    m = self.new
+    # create from hash; default to first weapon
+    m.name = type[:name]
+    m.max_hate = type[:hate]
+    m.max_endurance = type[:endurance]
+    m.armor = type[:armor]
+    m.parry = type[:parry]
+    m.shield = type[:shield]
+    weaponKey = weapon ? weapon : type[:weapons].keys[0]; #default to first weapon
+    m.weapon = self.weapons[weaponKey];
+    m.weapon_skill = type[:weapons][weaponKey]
+    m
+  end
+      
+  def armor=(newArmor)
+     if (newArmor.kind_of? Fixnum) 
+       @armor = Armor.new( self.class.to_s + " Armor", newArmor, 0 )
+     else
+       super
+     end
+     @armor
+   end
+
+   def shield=(newArmor)
+     if newArmor.kind_of? Fixnum
+       @shield = Shield.new( self.class.to_s + " Shield", newArmor, 0)
+     else 
+       super
+     end
+     @shield
+   end
+
+
+   def armor
+     if @armor == nil
+       @armor = 0
+     end
+     @armor
+   end
+
+   def shield
+     if @shield == nil
+       @shield = 0
+     end
+     @shield
+   end
+  
+      
+  
   def self.weapons
     Hash.new
   end
@@ -36,7 +94,7 @@ class Monster < Opponent
   
   
   def parry
-    @parry + @shield.value
+    @parry + ((@shield && @weapon.allows_shield?) ? @shield.value : 0)
   end
   
   def reset

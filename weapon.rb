@@ -10,15 +10,16 @@ require './equipment'
 
 class Weapon < Equipment
   
-  attr_accessor :name, :damage, :edge, :injury, :encumbrance, :called_shot_effect
+  attr_accessor :name, :damage, :edge, :injury, :encumbrance, :type, :called_shot_effect
   
   #need to add something about ranged or melee? and how it is being used if either?
 
-  def initialize( name, damage, edge, injury, encumbrance, called_shot_effect )
+  def initialize( name, damage, edge, injury, encumbrance, type, called_shot_effect )
     super( name, encumbrance )
     @damage = damage
     @edge = edge
     @injury = injury
+    @type = type
     @called_shot_effect = called_shot_effect
   end
   
@@ -28,6 +29,7 @@ class Weapon < Equipment
     @damage = base_weapon.damage
     @edge = base_weapon.edge
     @injury = base_weapon.injury
+    @type = base_weapon.type
     @called_shot_effect = base_weapon.called_shot_effect
   end
   
@@ -37,6 +39,10 @@ class Weapon < Equipment
     end
     0
     # have to update this for different special weapons
+  end
+  
+  def allows_shield?
+    (@type == :one_handed) || (@type == :versatile)
   end
   
   def self.fist

@@ -1,0 +1,121 @@
+
+
+%form#sethero(action="/sethero" method="POST")
+	-heroclass=(Object.const_get(culture))
+	%input#submit_button(type="submit")
+	%input{:type=>"hidden", :value=>culture, :name=>:culture}
+	%label
+		Background:
+	%select#background(name="background" onchange='setattributes(this)')
+		-heroclass.backgrounds.keys.each do | key |
+		-background = heroclass.backgrounds[key]
+			%option{ :value => "#{key}", :title => "This is some title text.", :body => "#{background[:body]}", :heart => "#{background[:heart]}", :wits => "#{background[:wits]}"}
+				= background[:name] 
+				
+	%fieldset.attributes
+		%legend 
+			Attributes
+		%table
+			%body
+				%tr
+					%td.attr
+					%td.attr
+					%td.attr
+					%td.attr
+						+3
+					%td.attr
+						+2
+					%td.attr
+						+1
+				-[:body, :heart, :wits].each do | attribute |
+					%tr
+						%td.attr
+							=attribute.to_s.capitalize
+						%td.attr{ :id => "#{attribute}" }
+							0
+						%td.attr{ :id => "favoured_" + "#{attribute}" }
+							( 0 )
+						-[3,2,1].each do |i|
+							%td.attr
+								%input{ :type => "radio", :id => "#{attribute.to_s + "_" + i.to_s}", :name => ("favorured_attribute_" + i.to_s), :value => "#{attribute}", :onchange => 'updateFavoured(this)' }
+				
+	%fieldset.checkboxes
+		%legend Virtues
+		%table#virtues(name="Virtues" class="culture_choices")
+			%body
+				- Hero.virtues.each do | v |
+					%tr
+						%td
+							%input{:type=>"checkbox", :name=>v}
+						%td= v.to_s.capitalize.gsub(/_/,' ')
+	%fieldset.checkboxes
+		%legend Rewards
+		%table#rewards(name="Rewards")
+			%body
+				- Hero.rewards.each do | v |
+					%tr
+						%td
+							%input{:type=>"checkbox", :name=>v}
+						%td
+							=v.to_s.capitalize.gsub(/_/,' ')
+	
+	%fieldset.radiobuttons
+		%legend Skills
+		%table#skill_table
+			%body
+				%tr
+					%td Skill
+					-6.times do |i|
+						%td
+							=(i+1).to_s
+				-["Weapon","Battle"].each do | s |
+					%tr
+						%td
+							=s
+						- 6.times do |i|
+							%td
+								%input{:type=>"radio", :value=> i+1, :name=> ("#{s}" + "_skill")}
+							
+							
+	%fieldset.attributes
+		%legend Gear
+		%table
+			%body
+				%tr
+					%td
+						Weapon:
+					%td
+						-weapons=Hero.weapons
+						%select#background(name="weapon")
+							-weapons.keys.each do | v |
+								%option{ :value => "#{v}" }
+									= weapons[v].name					
+				%tr
+					%td
+						Armor:
+					%td
+						-armors=Hero.gear.keep_if {|k,v| v.is_a? Armor }
+						%select#background(name="armor")
+							-armors.keys.each do | v |
+								%option{ :value => "#{v}" }
+									= armors[v].name
+				%tr
+					%td
+						Shield:
+					%td
+						-shields=Hero.gear.keep_if {|k,v| v.is_a? Shield }
+						%select#background(name="shield")
+							-shields.keys.each do | v |
+								%option{ :value => "#{v}" }
+									= shields[v].name	
+				%tr
+					%td
+						Helm:
+					%td
+						-helms=heroclass.gear.keep_if {|k,v| v.is_a? Helm }
+						%select#background(name="helm")
+							-helms.keys.each do | v |
+								%option{ :value => "#{v}" }
+									= helms[v].name	
+
+	

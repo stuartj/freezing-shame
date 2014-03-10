@@ -7,11 +7,6 @@ class Orc < Monster
     puts "Orc initializing"
   end
   
-  def self.weapons
-    result = super
-    result[:orc_axe] = Weapon.new( "Orc-axe", 5, 12, 16, 0, :sheild_smash );
-    return result
-  end
   
   def self.armors
     result = super
@@ -19,6 +14,24 @@ class Orc < Monster
     return result
   end
   
+  def self.weapons
+    result = super
+    result[:bent_sword] = Weapon.new( "Bent Sword", 4, 10, 12, 0, :one_handed, :disarm );
+    result[:bow_of_horn] = Weapon.new( "Bow of Horn", 4, 10, 12, 0, :ranged, :poison)
+    result[:broad_bladed_sword] = Weapon.new("Broad-bladed Sword", 5, 10, 14, 0, :one_handed, :poison)
+    result[:broad_headed_spear] = Weapon.new("Broad-headed Spear", 5, 10, 12, 0, :one_handed, :pierce)
+    result[:heavy_scimitar] = Weapon.new("Heavy Scimitar", 7, 10, 14, 0, :two_handed, :break_shield)
+    result[:orc_axe] = Weapon.new( "Orc-axe", 5, 12, 16, 0, :one_handed, :break_shield );
+    result[:spear] = Weapon.new("Spear", 4, 9, 12, 0, :versatile, :pierce)
+    result
+  end
+  
+  def self.types
+    result = {}
+    result[:chieftan] = { :name => "Orc Chieftan", :attribute_level => 5, :endurance => 20, :hate => 5, :parry => 4, :armor => 3, :shield => 3, :weapons => { :orc_axe => 3} }
+    result[:great] = { :name => "Great Orc", :attribute_level => 7, :endurance => 48, :hate => 8, :parry => 5, :armor => 4, :shield => 2, :weapons => { :heavy_scimitar => 3, :broad_headed_spear => 3, :orc_axe => 2}}
+    result
+  end
   
   
   def self.chieftan
@@ -37,3 +50,4 @@ class Orc < Monster
   end
 
 end
+

@@ -18,7 +18,23 @@ class NobleArmor < Armor
   end
 end
 
+class GreatSplittingAxe < Weapon
+  def initialize
+    self.clone( Hero.weapons[:great_axe] )
+    @name = "Splitting Axe (Great)"
+  end
+  
+  def self.to_sym
+    :great_splitting_axe
+  end
+end
+
 class SplittingAxe < Weapon
+  def initialize
+    self.clone (Hero.weapons[:axe] )
+    @name = "Splitting Axe"
+  end
+  
   def self.to_sym
     :splitting_axe
   end
@@ -40,7 +56,7 @@ class Beorning < Hero
   
   def self.culturalEquipment
     result = {}
-    [GiantSlayingSpear, NobleArmor, SplittingAxe].each do | x |
+    [GiantSlayingSpear, NobleArmor, GreatSplittingAxe, SplittingAxe].each do | x |
       result[x.to_sym] = x
     end
     result
@@ -60,20 +76,7 @@ class Beorning < Hero
     result[:voice_from_the_past] = {:name => "Voice from the Past", :body => 7, :heart => 4, :wits => 3}
     result
   end
-  
-  def self.weapons filter = nil 
-    result = super filter
-    if filter.is_a? Array
-      puts filter
-      if filter.include? :giant_slaying_spear  
-        result[:giant_slaying_spear] = GiantSlayingSpear.new
-      end
-    end
-    result
-  end
-  
-  
-  
+
   def isWeary
     false
   end

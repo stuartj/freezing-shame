@@ -31,7 +31,16 @@
 								="#{c.cultureName}"
 					%input#submit_button(type="submit" style="visibility:hidden")
 					
-				#herodetails
-					= partial :heroform, :layout => false, :locals => {:culture => "Barding"}
+				#attributes
+					= partial :attributes, :layout => false
 					
-			#herosummary
+				#featsandbackgrounds
+					= partial :featsandbackgrounds, :layout => false, :locals => {:culture =>"Barding"}
+					
+				#weaponform
+					= partial :weaponform, :layout => false, :locals => {:culture =>"Barding"}
+				
+				
+			#monster
+			
+//					= haml(:herosheet, :layout => false, :locals => {:culture => Beorning })
