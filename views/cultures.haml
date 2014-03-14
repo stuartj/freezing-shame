@@ -1,0 +1,7 @@
+%select#culture{ :name =>"culture", :selectedIndex => 0, :onchange => "setCulture( this )" }
+	-if culture == "None"
+		%option{ :value => "None", :selected => true }
+			Pick a Culture...
+	-Hero.cultures.each do | c |
+		%option{ :value => "#{c.to_s}" }
+			="#{c.cultureName}"

@@ -12,7 +12,7 @@ class EreborDwarf < Hero
   
   def self.weapons
      result = super
-     result[:mattock] = Weapon.new( "Mattock", 8, 10, 18, 3, nil );
+     result[:mattock] = Weapon.new( "Mattock", 8, 10, 18, 3, :two_handed, :smash_shield );
      return result
    end
    

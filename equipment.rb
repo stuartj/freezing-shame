@@ -14,8 +14,8 @@ class Equipment
   
   # use this for cloning equipment
   def clone( base_item )
-    @name = base_weapon.name
-    @encumbrance = base_weapon.encumbrance
+    @name = base_item.name
+    @encumbrance = base_item.encumbrance
   end
   
   

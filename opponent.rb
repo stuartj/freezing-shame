@@ -12,6 +12,7 @@ class Opponent
   attr_accessor :weapon, :weapon_skill
   attr_accessor :rweapon, :r_weapon_skill # ranged.  NYI
   #attr_accessor :weapon_name, :weapon_damage, :weapon_edge, :weapon_injury
+  attr_accessor :conditions # catch-all for combat modifiers
 
   
   def maxEndurance
@@ -68,7 +69,7 @@ class Opponent
     [] #array of symbols; implemented by sub-classes
   end
   
-  def self.gear filter = nil
+  def self.gear filter = nil, type = nil
     result = Hash.new
     result[:no_shield] = Shield.new("None", 0, 0)
     result[:no_helm] = Helm.new("None", 0, 0)
@@ -177,6 +178,7 @@ class Opponent
     @wounds = 0
     @is_shield_broken = false
     @endurance = self.maxEndurance
+    @conditions = Set.new
   end
   
   def alive?
@@ -259,8 +261,12 @@ class Opponent
   end
   
   def rally
+
   end
   
+
+  
+  # recursive; if opponent is still alive will attack back
   def attack( opponent, resultString )
     self.roll( @weapon_skill )
     
@@ -270,29 +276,11 @@ class Opponent
     
     if( @dice.test( opponent.tn self ) )
       resultString = opponent.getHitBy self, resultString 
-#      damage = @weapon.damage   
-      #bonus damage
-#      @dice.tengwars.times do
-#        damage += self.damageBonus
-#      end      
-#      opponent.takeDamage damage
-#      puts opponent.name + " takes " + damage.to_s + " damage"      
-      #piercing check
-#      if @dice.feat >= @weapon.edge  
-#        if verbose
-#          puts "Piercing blow!" 
-#        end        
-        
-#        opponent.rollProtectionAgainst( @weapon )
-  
-#        if verbose
-#          puts opponent.name + " rolls " + opponent.dice.to_s + " and is" + ((@dice.test @weapon.injury) ? " not" : "") + " wounded"
-#        end
-#      end
     end
     
-    #if piercing, roll armor
-    #if fail, deal with consequences (need to deal with Toughness)
+    if( opponent.alive? )
+      resultString = opponent.attack( self, resultString )
+    end
     
     resultString
   end

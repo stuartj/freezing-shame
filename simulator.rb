@@ -6,36 +6,22 @@ require 'haml'
 Dir["./monsters/*"].each {|file| require file }
 Dir["./heroes/*"].each {|file| require file }
 
-def fight( opponent1, opponent2, resultString )
-  
-  opponent1.reset
-  opponent2.reset
-  
-  result = {}
-  
-  rounds = 0
-  
-  while opponent1.alive? && opponent2.alive?
-    rounds += 1
-    resultString = opponent1.attack( opponent2, resultString )
-    if opponent2.alive?
-      resultString = opponent2.attack( opponent1, resultString )
-    end
-  end
-  resultString
-end
+
 
 def deathmatch( opponent1, opponent2, iterations )
   resultString = nil
   playerWins = 0
   iterations.times do | i |
+    opponent1.reset
+    opponent2.reset
+    
     if i==(iterations-1)
       resultString = ""
     end
     if( rand(2) == 1 )
-      resultString = fight(opponent1,opponent2,resultString)
+      resultString = opponent1.attack( opponent2, resultString )
     else
-      resultString = fight(opponent2,opponent1,resultString)
+      resultString = opponent2.attack(opponent1,resultString)
     end
     [opponent1,opponent2].each do | p |
       p.name + (p.alive? ? (" wins with " + (p.endurance * 100 / p.maxEndurance).to_s + "% health.") : " dies.")
@@ -73,6 +59,39 @@ post('/setculture') do
   #"[Foo, Bar, Baz]"
 end
 
+get('/monstertype') do
+  puts params
+  partial( :monstertype, :layout => false, :locals => {:monsterclass => params["monsterclass"]})
+end
+
+get('/backgrounds') do
+  partial( :backgrounds, :layout => false, :locals => {:culture => params["culture"]})
+end
+
+get('/gear') do
+  culture = ( (params.keys.include? "culture") ? params["culture"] : "Hero" )  
+  rewards = ((params.keys.include? "rewards") ? params["rewards"] : [] )
+  puts "Rewards: " + rewards.to_s
+  partial( :gear, :layout => false, :locals => {:culture => culture, :rewards=>rewards})
+end
+
+get('/attributes') do
+  partial( :attributes, :layout => false, :locals => {:attributes =>{:body => params[:body], :heart => params[:heart], :wits => params[:wits]}})
+end
+
+get('/feats') do
+  partial( :feats, :layout => false, :locals => { :culture => params[:culture]})
+end
+
+post('/masterform') do
+  puts params
+  hero = Hero.fromParams params
+  puts "Hero: " + hero.to_s
+  monster = Monster.fromParams params
+  iterations = params["iterations"].to_i
+  deathmatch( hero, monster, (iterations == 1 ? 1 : 10000)  )  
+end
+
 post('/sethero') do
   puts "Set hero fired! Values:"
   params.keys.each do |key|
@@ -82,8 +101,10 @@ post('/sethero') do
   puts "Iterations: " + iterations.to_s
   hero = Hero.fromParams params
   puts "Hero: " + hero.to_s
-  deathmatch( hero, (Orc.createType :chieftan, :orc_axe), iterations )  
+  deathmatch( hero, (Spider.createType :tauler, :beak), iterations )  
 end
+
+
 
 
 post('/setbackground') do

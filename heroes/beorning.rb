@@ -2,8 +2,7 @@ require './hero'
 
 class GiantSlayingSpear < Weapon
   def initialize
-    g = Beorning.weapons[:great_spear]
-    super( g.name, g.damage, g.edge, g.injury, g.encumbrance, g.called_shot_effect)
+    self.clone( Hero.weapons[:great_spear])
     @name = "Giant Slaying Spear"
   end
   
@@ -13,6 +12,11 @@ class GiantSlayingSpear < Weapon
 end
 
 class NobleArmor < Armor
+  def initialize
+    self.clone( Hero.gear[:leather_corslet] )
+    @name = "Noble Armor"
+  end
+
   def self.to_sym
     :noble_armor
   end
@@ -55,7 +59,7 @@ class Beorning < Hero
   end
   
   def self.culturalEquipment
-    result = {}
+    result = super
     [GiantSlayingSpear, NobleArmor, GreatSplittingAxe, SplittingAxe].each do | x |
       result[x.to_sym] = x
     end

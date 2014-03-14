@@ -1,0 +1,15 @@
+%fieldset
+	%legend Match Settings
+	%fieldset
+		%legend Iterations
+		%input{ :type => "radio", :name => "iterations", :value => 1, :checked => true }
+			1 (Run once, output blow-by-blow)
+		%input{ :type => "radio", :name => "iterations", :value => 2, :checked => false }
+			10,000 (Run many, output statistics)
+	%fieldset
+		%legend Stance
+		%select{ :id => "stance", :name => "stance"}
+			-stances = ["Defensive","Open","Forward"]
+			-stances.size.times do |i|
+				%option{:value => "#{12-i*3}"}
+					=stances[i];

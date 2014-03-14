@@ -39,6 +39,7 @@ class Hero < Opponent
     hero.shield = params[:shield].to_sym
     hero.helm = params[:helm].to_sym
     hero.weapon_skill = params[:Weapon_skill].to_i
+    hero.stance = params[:stance].to_i
     hero.name = "Default Hero Name"
     hero
   end
@@ -59,6 +60,15 @@ class Hero < Opponent
   end
   
   
+  def self.culturalEquipment
+    {} # implemented by subclasses
+  end
+  
+  def self.gear filter = nil, type = nil
+    result = super
+    return ((filter == nil && type == nil) ? result : self.filter( gear, filter, type ))
+  end
+  
   def self.weapons filter = nil
     result = super
     result[:dagger] = Weapon.new( "Dagger", 3, 12, 12, 0, :one_handed, nil );
@@ -74,19 +84,37 @@ class Hero < Opponent
     result[:long_hafted_axe_2] = Weapon.new("Long-hafted Axe (2H)", 7, 12, 20, 3, :two_handed, nil)
     result[:bow] = Weapon.new("Bow", 5, 10, 14, 1, :ranged, nil)
     result[:great_bow] = Weapon.new("Great bow", 7, 10, 16, 3, :ranged, nil)
+    return ((filter == nil) ? result : self.filter( result, filter, Weapon ))
+  end
+  
+  def self.filter( result, filter, type )
+    
+    if type.is_a? String
+      type = Object.const_get(type)
+    end
+
+
+    if filter.is_a? String
+      filter = filter.split(',').collect{|e|e.to_sym}
+    end
+    
+    result.keys.each do |key|
+      if result[key].class != type
+        result.delete key
+      end
+    end
     
     if filter.is_a? Array
       puts filter
       gear = self.culturalEquipment
       gear.keys.each do |key|
         puts key
-        if (filter.include? key) && (culturalEquipment[key].superclass == Weapon )
+        if (filter.include? key) && (culturalEquipment[key].superclass == type )
           puts "Key: " + key.to_s + " found!"
           result[key] = culturalEquipment[key].new
         end
       end
-    end
-    
+    end   
     result
   end
   
@@ -195,7 +223,7 @@ class Hero < Opponent
   
   
   def tn opponent  # this is TN to get hit; opponent argument only there for monsters
-    @stance + self.parry 
+    @stance + ((@conditions.include? :bewildered) ? 0 : self.parry)
   end
   
   def alive?

@@ -1,7 +1,10 @@
-%select#monstertype
-	-types=(Object.const_get(monster)).types
-	-types.keys.each do |key|
-		%option{ :value => key }
-			= types[key][:name]
-			
+-if monsterclass != "None"
+	%select#monstertype{ :name => "monstertype"}
+		%option{ :value => "None" }
+			Choose a Type...
+		-types=(Object.const_get(monsterclass)).types
+		-types.keys.each do |key|
+			%option{ :value => key }
+				= types[key][:name]
+		
 		

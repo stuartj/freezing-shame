@@ -36,6 +36,22 @@ class Dice
     @tengwars.to_s
     return returnString
   end
+  
+  def statsTest( dice, tn, weary=false )
+    wins = 0
+    eyes = 0
+    10000.times do |i|
+      self.reset
+      self.roll( dice, weary )
+      puts self.to_s
+      if @sauron
+        eyes += 1
+      end
+      wins += ((self.test tn) ? 1 : 0)
+    end
+    puts "win: " + (wins / 100).to_s + "%"
+    puts "Saurons: " + eyes.to_s
+  end
                 
   def test( tn )
     if @sauron

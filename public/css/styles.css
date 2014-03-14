@@ -10,12 +10,15 @@
 }
 
 select{
-	margin:12px 0;
 	float:center;
 }
 
 body{
 	margin:20px;
+}
+
+#submit_button{
+	float:center;
 }
 
 #header{
@@ -56,6 +59,14 @@ form{
 }
 
 #hero{
+	margin:12px 0;
+	width :50%;
+	float:left;
+	background-color:#ddd;
+	padding:20px;
+}
+
+#monster{
 	margin:12px 0;
 	width :50%;
 	float:left;

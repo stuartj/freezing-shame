@@ -1,0 +1,20 @@
+%fieldset
+	%legend Skills
+	%table#skill_table
+		%body
+			%tr
+				%td Skill
+				-6.times do |i|
+					%td
+						=(i+1).to_s
+			-["Weapon","Battle"].each do | s |
+				%tr
+					%td
+						=s
+					- 6.times do |i|
+						%td
+							%input{:type=>"radio", :value=> i+1, :name=> ("#{s}" + "_skill")}
+					%td
+						%input{:type=>"checkbox", :name => ("#{s}" + "_favoured" ), :value=>false}
+					%td
+						Favoured

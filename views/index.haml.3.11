@@ -1,0 +1,41 @@
+!!!
+
+// %script(src="//ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js")
+// wwww%script(src="/right.js")
+%script(src="/jquery-2.1.-.min.js")
+%script(src="/ajax_stuff.js")
+%script( src="/helpers.js" )
+// %script(src="/nhpup_1.1.js")
+
+
+%html
+	%head
+		%title Middle Earth Death Match
+		%link(rel="stylesheet" href="http://yui.yahooapis.com/2.8.0r4/build/reset/reset-min.css")
+		%link(rel="stylesheet" href="css/styles.css")
+		
+	%body
+		#wrapper
+			#header
+				%h1 Middle Earth Death Match
+			
+			#content
+						
+			#hero
+				%fieldset
+					%legend
+						Hero
+				%form#masterform(action = 'runSimulation()')
+					= partial :cultureform, :layout => false, :locals => {:culture => "None", :background => "None"}
+					%label
+						Culture:
+					%select#culture(name="culture" "updateFormElement( this, 'heroform')")
+						- Hero.cultures.each do | c |
+							%option{ :value => "#{c.to_s}" }
+								="#{c.cultureName}"
+					%input#submit_button(type="submit" style="visibility:hidden")
+					
+				#herodetails
+					= partial :heroform, :layout => false, :locals => {:culture => "Barding"}
+					
+			#output

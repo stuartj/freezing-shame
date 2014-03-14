@@ -11,7 +11,7 @@ class Monster < Opponent
   
   @@monsters = nil
   
-  attr_accessor :attribute_level, :parry, :hate
+  attr_accessor :attribute_level, :parry, :hate, :attributes
   attr_accessor :max_hate, :max_endurance
     
   def initialize
@@ -19,21 +19,21 @@ class Monster < Opponent
     puts "Monster initializing"
     @parry = 0
     @attribute_level = 1
+    @attributes = []
     @hate = 1
     @special_abilities = 0 #bit mask
   end
   
-  def self.allMonsters
-    result = {}
-    @@monsters.each do |m|
-      types = m.types
-      types.keys.each do |key|
-        result[key] = types[key]
-      end
-    end
-    result
+  def self.fromParams params
+    monsterClass = (Object.const_get(params[:monsterclass]));
+    monsterClass.createType params[:monstertype]
   end
   
+  
+  def self.monsters
+    @@monsters
+  end
+    
   def self.register subclass
     if !@@monsters 
       @@monsters = Set.new
@@ -41,22 +41,27 @@ class Monster < Opponent
     @@monsters.add subclass
   end
   
-  def self.createType typeSymbol, weapon=nil
-    type = self.types[typeSymbol]
-    m = self.new
-    # create from hash; default to first weapon
-    m.name = type[:name]
-    m.max_hate = type[:hate]
-    m.max_endurance = type[:endurance]
-    m.armor = type[:armor]
-    m.parry = type[:parry]
-    m.shield = type[:shield]
+  def initFromType typeSymbol, weapon=nil
+    puts typeSymbol
+    type = self.class.types[typeSymbol.to_sym]
+    @name = type[:name]
+    @abilities = type[:abilities]
+    @attribute_level = type[:attribute_level]
+    @max_hate = type[:hate]
+    @max_endurance = type[:endurance]
+    @armor = type[:armor]
+    @parry = type[:parry]
+    @shield = type[:shield]
     weaponKey = weapon ? weapon : type[:weapons].keys[0]; #default to first weapon
-    m.weapon = self.weapons[weaponKey];
-    m.weapon_skill = type[:weapons][weaponKey]
-    m
+    self.weapon = self.weapons[weaponKey];
+    @weapon_skill = type[:weapons][weaponKey]
+    self
   end
-      
+  
+  def self.createType typeSymbol, weapon=nil
+    self.new.initFromType typeSymbol, weapon
+  end
+  
   def weapon=(newWeapon)
     super
     if( @weapon.type == :attribute )
@@ -113,9 +118,13 @@ class Monster < Opponent
     @max_endurance
   end
   
+  def protection
+    @armor
+  end
+  
   
   def parry
-    @parry + ((@shield && @weapon.allows_shield?) ? @shield.value : 0)
+    @parry + ((@shield && @weapon.allows_shield?) ? @shield : 0)
   end
   
   def reset
@@ -132,7 +141,7 @@ class Monster < Opponent
   end
   
   def alive?
-    return super && (wounds == 0)
+    return super && (wounds < ((@abilities.include? :great_size) ? 2 : 1))
   end
   
   
@@ -143,6 +152,12 @@ class Monster < Opponent
   def damageBonus
     self.attribute_level
   end
+  
+  # special ability use
+  def bewilder opponent
+    opponent.conditions.add :bewildered
+  end
+  
   
 end
 

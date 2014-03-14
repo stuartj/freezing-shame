@@ -119,7 +119,17 @@
 									
 	%fieldset.attributes
 		%legend 
-			Opponent
+			Opponent			
+		%select{ :name => "monsterclass", :onchange => "updateFormElements( this, 'monstertypes' )" }
+			%option{ :value => "None" }
+				Pick a Monster Family
+			-Monster.monsters.each do |m|
+				%option{ :value => m.name.to_sym }
+					= m.name
+		#monstertypes
+			=partial :monstertype, :layout => false, :locals => {:monsterclass => "None"}
+				
+			
 	%fieldset.attributes
 		%legend
 			Fight vs. Orc Chieftan
@@ -131,10 +141,6 @@
 					=(10**i).to_s
 	%input#submit_button(type="submit")
 	
--#		%select{}
--#			-Monster.allMonsters.keys.each do |key|
--#				%option{ :value => "#{key}" }
--#					= Monster.allMonsters[key]
 
 
 	

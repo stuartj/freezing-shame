@@ -1,9 +1,11 @@
 !!!
+%script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js")
 
-// %script(src="/jquery-2.1.0.min.js")
-%script(src="/right.js")
-%script(src="/ajax_stuff.js")
-%script( src="/helpers.js" )
+//%script(src="//code.jquery.com/jquery-latest.min.js")
+//%script(src="/jquery-2.1.-.min.js")
+// wwww%script(src="/right.js")
+//%script(src="/jquery-2.1.-.min.js")
+// %script(src="/ajax_stuff.js")
 // %script(src="/nhpup_1.1.js")
 
 
@@ -19,19 +21,53 @@
 				%h1 Middle Earth Death Match
 			
 			#content
+
+			%form#masterform{ :action => '/masterform', :method => "Post"}
 						
-			#hero
-				%h1.center Hero
-				%form#setculture(action="/setculture" method="POST")
-					%label
-						Culture:
-					%select#culture(name="culture" onchange='submit_button.click()')
-						- Hero.cultures.each do | c |
-							%option{ :value => "#{c.to_s}" }
-								="#{c.cultureName}"
-					%input#submit_button(type="submit" style="visibility:hidden")
-					
-				#herodetails
-					= partial :heroform, :layout => false, :locals => {:culture => "Barding"}
+				#hero
+					%fieldset
+						%legend
+							Hero
+						%p
+							Culture:
+							#cultures
+								= partial :cultures, :layout => false, :locals => { :culture => "None"}		
+						%p
+							Background:
+							#backgrounds
+								= partial :backgrounds, :layout => false, :locals => { :culture => "None", :background => "None"}
+						#attributes
+							= partial :attributes, :layout=>false,:locals => {:attributes =>{:body=>0,:heart=>0,:wits=>0}}
+						#skills
+							= partial :skills, :layout => false
+							
+						#feats
+							= partial :feats, :layout => false, :locals => { :culture => "Hero" }
+						
+							
+						#gear
+							= partial :gear, :layout => false, :locals => { :culture => "Hero", :rewards => [] }
+							
+				#matchsettings
+					= partial :matchsettings, :layout => false
+				#monster		
+					%fieldset
+						%legend Opponent
+						%p 
+							Family:
+							#monsterclass
+								= partial :monsterclass, :layout => false
+						%p 
+							Type:
+							#monstertype
+								= partial :monstertype, :layout => false, :locals => { :monsterclass => "None" }
+	
+				%input#submit_button(type="submit" value="Submit")
+						
+						
 					
 			#output
+%script(src="/helpers.js")
+
+			
+

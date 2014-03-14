@@ -1,0 +1,6 @@
+%select{ :name => "monsterclass", :onchange => "updateFormElement( this, 'monstertype' )" }
+	%option{ :value => "None" }
+		Choose a Category...
+	-Monster.monsters.each do |m|
+		%option{ :value => m.name.to_sym }
+			= m.name

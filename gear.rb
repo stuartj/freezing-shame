@@ -28,7 +28,7 @@ class Gear < Equipment
   # use this for cloning equipment
   def clone( base_gear )
     super( base_gear )
-    @value = base_weapon.value
+    @value = base_gear.value
   end
   
 end
