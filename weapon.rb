@@ -33,6 +33,11 @@ class Weapon < Equipment
     @called_shot_effect = base_weapon.called_shot_effect
   end
   
+  def qualityList
+    [:grievous, :keen, :fell] # implemented by subclasses; list of all possible qualities
+  end
+  
+  
   def rollModifier
     if( @qualities.include? :dalish_longbow)
       return -1

@@ -1,6 +1,7 @@
 require './dice'
 require './gear'
 require './weapon'
+require './fightrecord'
 
 class Opponent  
 
@@ -18,7 +19,7 @@ class Opponent
   def maxEndurance
     0 # implemented by subclasses
   end
-
+  
   def initialize
     puts "Opponent intializing"
     @conditions = Set.new
@@ -201,13 +202,16 @@ class Opponent
     0 #overridden by subclasss
   end
   
-  def rollProtectionAgainst opponent
+  def rollProtectionAgainst opponent, record
+    tn = opponent.weapon.injury
     self.dice.roll( self.protection, self.weary?, opponent.weapon.rollModifier )
-    test = @dice.test weapon.injury
+    record.addEvent( opponent.name, :pierce, nil, nil )
+    record.addEvent( self.name, :armor_check, @dice, tn )
+    test = @dice.test opponent.weapon.injury
     if !test
       self.wound
+      record.addEvent( self.name, :wound, @dice, self.wounds )
     end
-    return test
   end
   
   def protection
@@ -237,27 +241,18 @@ class Opponent
   
   
   
-  def getHitBy opponent, resultString
+  def getHitBy opponent, record
     damage = opponent.weapon.damage
     opponent.dice.tengwars.times do
       damage += opponent.damageBonus
     end
     @endurance -= damage
-    if resultString
-      resultString += "<br>" + self.name + " takes " + damage.to_s + " damage (" + @endurance.to_s + " left)"
-    end
+
+    record.addEvent( self.name, :damage, nil, damage )
     
     if opponent.dice.feat >= opponent.weapon.edge
-      if resultString != nil
-        puts "hello?"
-        resultString += "<br>Piercing Blow!"
-      end
-      test = self.rollProtectionAgainst( opponent )
-      if resultString != nil
-        resultString += "<br>" + @name + " rolls " + @dice.to_s + " and is" + (test ? " not" : "") + " wounded"
-      end     
+      test = self.rollProtectionAgainst( opponent, record )
     end
-    resultString
   end
   
   def rally
@@ -266,23 +261,37 @@ class Opponent
   
 
   
-  # recursive; if opponent is still alive will attack back
-  def attack( opponent, resultString )
-    self.roll( @weapon_skill )
-    
-    if resultString != nil
-      resultString += "<br>" + self.name + " attacks " + opponent.name + " and rolls " + @dice.to_s
+  # if opponent is still alive will attack back
+  def attack( opponent, record = nil, nest = 0 )
+    if record == nil
+      record = FightRecord.new
     end
+    
+#    if resultString != nil
+#      resultString += "<br>" + self.name + " attacks " + opponent.name + " and rolls " + @dice.to_s
+#    end
+
+    self.roll( @weapon_skill )
+    tn = opponent.tn self
+    
+    record.addEvent( self.name, :attack, @dice.clone, tn )
     
     if( @dice.test( opponent.tn self ) )
-      resultString = opponent.getHitBy self, resultString 
+      opponent.getHitBy self, record 
     end
+    
+    if nest > 40 
+      puts "Depth: " + nest.to_s
+    end
+    
     
     if( opponent.alive? )
-      resultString = opponent.attack( self, resultString )
+      opponent.attack( self, record, nest+1 )
+    else
+      record.addEvent( opponent.name, :dies, nil )
     end
     
-    resultString
+    record
   end
 end
 

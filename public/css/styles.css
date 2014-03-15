@@ -58,6 +58,17 @@ form{
 	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
 
+table.stats {
+	border:1px;
+	border-color:#bbb;
+}
+
+td.stats {
+	padding: 0.5rem;
+	border: 1px solid #999;
+	text-align:center;
+}
+
 #hero{
 	margin:12px 0;
 	width :50%;

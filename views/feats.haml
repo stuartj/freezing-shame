@@ -9,7 +9,7 @@
 	%legend Rewards
 	- i = 0
 	- heroclass.rewards.each do | v |
-		%input{:type=>"checkbox", :culture=>"#{culture}", :onchange=>"updateRewards(this)", :value=>v}
+		%input{:name => "#{v}", :type=>"checkbox", :culture=>"#{culture}", :onchange=>"updateRewards(this)"}
 			=v.to_s.capitalize.gsub(/_/,' ')
 		-i += 1
 	

@@ -11,28 +11,60 @@ Dir["./heroes/*"].each {|file| require file }
 def deathmatch( opponent1, opponent2, iterations )
   resultString = nil
   playerWins = 0
+  stats = []
   iterations.times do | i |
     opponent1.reset
     opponent2.reset
     
-    if i==(iterations-1)
-      resultString = ""
-    end
+#    if i==(iterations-1)
+#      resultString = ""
+#    end
     if( rand(2) == 1 )
-      resultString = opponent1.attack( opponent2, resultString )
+      stats.push opponent1.attack( opponent2 )
     else
-      resultString = opponent2.attack(opponent1,resultString)
-    end
-    [opponent1,opponent2].each do | p |
-      p.name + (p.alive? ? (" wins with " + (p.endurance * 100 / p.maxEndurance).to_s + "% health.") : " dies.")
+      stats.push opponent2.attack( opponent1 )
     end
     if opponent1.alive?
       playerWins+=1
     end
   end
-  resultString += "<p> Player wins: " + (playerWins * 100.0 / iterations).round(1).to_s + "%."
-  resultString
+#  resultString += "<p> Player wins: " + (playerWins * 100.0 / iterations).round(1).to_s + "%."
+#  resultString
+
+# if run once, return combat log as text
+  if iterations == 1
+    return stats.last.to_html   # turn this into a partial at some point
+  end
+  
+  #otherwise return stats page
+  partial( :stats, :locals => { :iterations => iterations, :stats => FightRecord.compile(stats)})
 end
+
+def statsToHtml compiledStats
+  result = "<table padding=5 border=1>"
+  result += "<tr><th>Name</th><th>Win</th><th>Hit</th><th>Weary</th><th>Prot Rolls</th><th>Resist</th></tr>"
+  
+  compiledStats.keys.sort.each do |key|
+    entry = compiledStats[key]
+    result += "<tr>"
+    result += "<td>" + key.to_s + "</td>"
+    h = entry[:hits]
+    m = entry[:misses]
+    p = entry[:pierces]
+    w = entry[:wounds]
+    d = entry[:deaths]
+    weary = entry[:weary]
+    result += "<td align=center>" + ((10000 - d) / 100).to_s + "%</td>"
+    result += "<td align=center>" + (h * 100 / (h + m)).to_s + "%</td>"
+    result += "<td align=center>" + (weary * 100 / (h + m)).to_s + "%</td>"
+    result += "<td align=center>" + p.to_s + "</td>"
+    result += "<td align=center>" + ((p - w) * 100 / p).to_s + "%</td>"
+    result += "</tr>"
+  end
+  result += "</table>"
+  result
+end
+  
 
 get '/index' do
   @foo = "bar"
@@ -84,12 +116,10 @@ get('/feats') do
 end
 
 post('/masterform') do
-  puts params
   hero = Hero.fromParams params
-  puts "Hero: " + hero.to_s
   monster = Monster.fromParams params
   iterations = params["iterations"].to_i
-  deathmatch( hero, monster, (iterations == 1 ? 1 : 10000)  )  
+  deathmatch( hero, monster, (iterations == 1 ? 1 : 1000)  )  
 end
 
 post('/sethero') do

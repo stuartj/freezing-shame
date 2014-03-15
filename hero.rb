@@ -40,7 +40,11 @@ class Hero < Opponent
     hero.helm = params[:helm].to_sym
     hero.weapon_skill = params[:Weapon_skill].to_i
     hero.stance = params[:stance].to_i
-    hero.name = "Default Hero Name"
+    hero.name = "Hero"
+    hero.armor.addQualities params
+    hero.shield.addQualities params
+    hero.weapon.addQualities params
+    hero.helm.addQualities params
     hero
   end
   	

@@ -1,39 +1,54 @@
 class Dice
   
-  attr_accessor :total, :sauron, :gandalf, :tengwars, :feat, :bonus
+  attr_accessor :rolls, :feat, :weary
   
   def initialize
     self.reset
   end
   
   def reset
-    @gandalf = false
-    @sauron = false
-    @total = 0
     @feat = 0
-    @bonus = 0
-    @tengwars = 0
+    @weary = false
     @rolls = []
   end
   
-  def to_s
+  def sauron?
+    @feat == 11
+  end
+  
+  def gandalf?
+    @feat == 12
+  end
+  
+  def to_s   
+    returnString = "("
     
-    returnString = ""
-    
-    if @sauron
+    if self.sauron?
       returnString += "S"
-    elsif @gandalf
+    elsif self.gandalf?
       returnString += "G"
     else
       returnString += @feat.to_s
     end
-    returnString += "+(" 
+    returnString += "|" 
     @rolls.each do |i|
       returnString += i.to_s
     end
-    returnString += ")=" + @total.to_s + "|" + (["-","+","++"][[@tengwars,2].min]).to_s
+    returnString += ")=" 
     
-    @tengwars.to_s
+    #total
+    if self.gandalf?
+      returnString += "A"
+    elsif self.sauron?
+      returnString += "F"
+    else
+      returnString += self.total.to_s
+    end
+    
+    if !self.sauron?
+      returnString += (["","+","++"][[self.tengwars,2].min]).to_s
+    end
+    
     return returnString
   end
   
@@ -44,7 +59,7 @@ class Dice
       self.reset
       self.roll( dice, weary )
       puts self.to_s
-      if @sauron
+      if self.sauron?
         eyes += 1
       end
       wins += ((self.test tn) ? 1 : 0)
@@ -54,9 +69,9 @@ class Dice
   end
                 
   def test( tn )
-    if @sauron
+    if self.sauron?
       return false
-    elsif @gandalf || (@total + @bonus) >= tn
+    elsif self.gandalf? || (self.total >= tn)
       return true
     else
       return false
@@ -64,10 +79,26 @@ class Dice
     false
   end
   
-  def roll(dice, weary=false, advantage=0, bonus=0)
+  def total
+    @feat + ((@rolls.length > 0) ? @rolls.inject{|sum,x| sum + x } : 0)
+  end
+  
+  def tengwars
+    @rolls.count{ |d| d == 6 }
+  end
+  
+  def clone
+    d = Dice.new
+    d.feat = @feat
+    d.rolls = @rolls
+    d.weary = @weary
+    d
+  end
+  
+  def roll(dice, weary=false, advantage=0)
     self.reset
+    @weary = weary
     @feat = rand(12) + 1
-    @bonus = bonus
     
 #    puts "Mod :" + mod.to_s
 
@@ -82,28 +113,14 @@ class Dice
       end
     end
     
-#    puts "Feat: " + feat.to_s
- 
-    if @feat == 11
-      @sauron = true
-    elsif @feat == 12
-      @gandalf = true
-    end
-    
-    @total = @total + @feat
     
     dice.times do
       roll = rand(6) + 1
-      @rolls.push ( weary ? 0 : roll )
-#      puts roll
-
-      if roll < 4 && weary
+      if @weary && roll < 4
         roll = 0
-      elsif roll == 6
-        @tengwars = @tengwars + 1
       end
  
-      @total = @total + roll
+      @rolls.push roll
     end
   end
 end

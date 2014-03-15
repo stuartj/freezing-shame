@@ -24,7 +24,7 @@ function updateRewards(reward) {
 	for(var i=0;i<reward.parentNode.childNodes.length;i++) {
 		var child = reward.parentNode.childNodes[i];
 		if( child.checked ) {
-			rewards[j++] = child.value; 
+			rewards[j++] = child.name; 
 		}
 	}
 	params += "&rewards=" + rewards;	

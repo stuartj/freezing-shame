@@ -42,6 +42,10 @@ class Protection < Gear
 end
 
 class Armor < Protection
+  def qualityList
+    [:cunning_make, :close_fitting] 
+  end
+  
 
 end 
 
@@ -59,6 +63,11 @@ class Shield < Gear
     end
     @is_broken
   end
+  
+  def qualityList
+    [:reinforced] # implemented by subclasses; list of all possible qualities
+  end
+  
   
   def value
     if (@qualities.include? :reinforced)

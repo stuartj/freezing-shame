@@ -1,0 +1,38 @@
+%table.stats{ :padding => 4, :border => 1 }
+	%tr.stats
+		%th.stats{ :width=>80 } Name
+		%th.stats{ :width=>50 } 
+			Win
+		%th.stats{ :width=>50 } 
+			Hit
+		%th.stats{ :width=>50 } 
+			Weary
+		%th.stats{ :width=>50 } 
+			Pierces
+		%th.stats{ :width=>50 } 
+			Resist Pierce
+	-stats.keys.sort.each do |key|
+	-hits = stats[key][:hits]
+	-attacks = stats[key][:attacks]
+	-weary = stats[key][:weary]
+	-pierces = stats[key][:pierces]
+	-prots = stats[key][:armor_checks]
+	-wounds = stats[key][:wounds]
+	-deaths = stats[key][:deaths]
+		%tr.stats
+			%td.stats
+				=key
+			%td.stats{:align=>"center"}
+				=((iterations - deaths) * 100 / iterations).to_s + "%"
+			%td.stats{:align=>"center"}
+				=(hits * 100 / attacks).to_s + "%"
+			%td.stats{:align=>"center"}
+				=(weary * 100 / attacks).to_s + "%"
+			%td.stats{:align=>"center"}
+				=(pierces * 100 / attacks).to_s + "%"
+			%td.stats{:align=>"center"}
+				=((prots - wounds) * 100 / prots).to_s + "%"
+			
+		
+	
+		

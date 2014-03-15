@@ -81,8 +81,8 @@ class Beorning < Hero
     result
   end
 
-  def isWeary
-    false
+  def weary?
+    @wounds > 0 ? false : super
   end
   
   def virtuesAndRewardsList

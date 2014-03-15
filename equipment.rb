@@ -18,9 +18,22 @@ class Equipment
     @encumbrance = base_item.encumbrance
   end
   
+  def addQualities symbols
+    symbols.keys.each do |s|
+      if self.qualityList.include? s.to_sym
+        self.applyQuality s.to_sym
+      end
+    end
+  end
+  
+  def qualityList
+    [] # implemented by subclasses; list of all possible qualities
+  end
+  
   
   def applyQuality( symbol ) 
     qualities.add symbol
+    puts symbol.to_s + " added to " + self.name
   end    
   
   def self.to_sym
