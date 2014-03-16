@@ -37,14 +37,26 @@ class Dice
         returnString += self.feat.to_s 
       end
     else
-      case @feats[0]
-      when 0
-        returnString += "S"
-      when 12
-        returnString += "G"
-      else
-        returnString += @feats[0].to_s
+      greyed_out = (self.feat == feats[0] ? 1 : 0)
+      2.times do |i|
+        if i == greyed_out
+          returnString += "<span style='color:grey'>"
+        end
+        case @feats[i]
+        when 0
+          returnString += "S"
+        when 12
+          returnString += "G"
+        else
+          returnString += @feats[i].to_s
+        end
+        if i == greyed_out
+          returnString += "</span>"
+        end
+
+        returnString += ( i == 0 ? ',' : '' ) # comma in between
       end
+          
       returnString += ':'
       case @feats[1]
       when 0
