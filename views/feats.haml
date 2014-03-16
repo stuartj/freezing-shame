@@ -1,18 +1,22 @@
 -heroclass=(Object.const_get(culture))
-%fieldset.checkboxes
-	%legend Virtues
-	- heroclass.virtues.each do | v |
-		%input{:type=>"checkbox", :value=>v}
-			= v.to_s.capitalize.gsub(/_/,' ')
 					
 %fieldset.checkboxes{ :culture=>"#{culture}" }
 	%legend Rewards
 	- i = 0
-	- heroclass.rewards.each do | v |
-		%input{:name => "#{v}", :type=>"checkbox", :culture=>"#{culture}", :onchange=>"updateRewards(this)"}
-			=v.to_s.capitalize.gsub(/_/,' ')
+	- rewards = heroclass.rewards
+	- rewards.keys.each do | r |
+		%p
+		%input{:name => r, :type=>"checkbox", :culture=>culture, :reward_type => rewards[r][:type], :disabled => !rewards[r][:implemented], :onchange=>"updateRewards(this)"}
+			= rewards[r][:name]
 		-i += 1
 	
+%fieldset.checkboxes
+	%legend Virtues
+	- virtues = heroclass.virtues
+	- virtues.keys.each do | v |
+		%p
+		%input{:type=>"checkbox", :name=>"#{v}", :disabled => !virtues[v][:implemented]}
+			= virtues[v][:name]
 
 
 

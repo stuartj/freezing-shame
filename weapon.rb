@@ -24,13 +24,8 @@ class Weapon < Equipment
   end
   
   # use this for cloning equipment
-  def clone( base_weapon )
-    super( base_weapon )
-    @damage = base_weapon.damage
-    @edge = base_weapon.edge
-    @injury = base_weapon.injury
-    @type = base_weapon.type
-    @called_shot_effect = base_weapon.called_shot_effect
+  def clone( newname=nil )
+    Weapon.new( (newname ? newname : @name ), @damage, @edge, @injury, @encumbrance, @type, @called_shot_effect)
   end
   
   def qualityList
@@ -51,7 +46,7 @@ class Weapon < Equipment
   end
   
   def self.fist
-    Weapon.new( "Unarmed", 1, 13, 0, 0, nil)
+    Weapon.new( "Unarmed", 1, 13, 0, 0, :unarmed, nil)
   end
   
   def damage

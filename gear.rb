@@ -26,9 +26,8 @@ class Gear < Equipment
   end
   
   # use this for cloning equipment
-  def clone( base_gear )
-    super( base_gear )
-    @value = base_gear.value
+  def clone( newname = nil )
+    self.class.new( (newname ? newname : @name), @value, @encumbrance )
   end
   
 end
@@ -79,9 +78,10 @@ class Shield < Gear
   end
   
   # use this for cloning equipment
-  def clone( base_shield )
-    super( base_shield )
-    @is_broken = false
+  def clone( newname = nil )
+    result = super( newname )
+    result.is_broken = false
+    result
   end
   
   

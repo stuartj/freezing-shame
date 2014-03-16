@@ -1,31 +1,10 @@
 %fieldset
-	-heroclass=(Object.const_get(culture))
 	%legend Gear
-	%p 
-		Weapon:
-		-weapons=heroclass.weapons( rewards ) 
-		%select#background(name="weapon")
-			-weapons.keys.each do | v |
-				%option{ :value => "#{v}" }
-					= weapons[v].name					
-	%p 
-		Armor:
-		-armors=heroclass.gear( rewards, "Armor" )
-		%select#background(name="armor")
-			-armors.keys.each do | v |
-				%option{ :value => "#{v}" }
-					= armors[v].name
-	%p 
-		Shield:
-		-shields=heroclass.gear( rewards, "Shield" )
-		%select#background(name="shield")
-			-shields.keys.each do | v |
-				%option{ :value => "#{v}" }
-					= shields[v].name	
-	%p 
-		Helm:
-		-helms=heroclass.gear(rewards, "Helm" )
-		%select#background(name="helm")
-			-helms.keys.each do | v |
-				%option{ :value => "#{v}" }
-					= helms[v].name	
+	#weapon
+		= partial :geartype, :layout => "false", :locals => { :culture=> culture, :type => "Weapon", :reward => "None" }					
+	#armor
+		= partial :geartype, :layout => "false", :locals => { :culture=> culture, :type => "Armor", :reward => "None" }					
+	#shield
+		= partial :geartype, :layout => "false", :locals => { :culture=> culture, :type => "Shield", :reward => "None" }					
+	#helm
+		= partial :geartype, :layout => "false", :locals => { :culture=> culture, :type => "Helm", :reward => "None" }					

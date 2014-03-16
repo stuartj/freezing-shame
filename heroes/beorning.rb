@@ -1,49 +1,5 @@
 require './hero'
 
-class GiantSlayingSpear < Weapon
-  def initialize
-    self.clone( Hero.weapons[:great_spear])
-    @name = "Giant Slaying Spear"
-  end
-  
-  def self.to_sym
-    :giant_slaying_spear
-  end
-end
-
-class NobleArmor < Armor
-  def initialize
-    self.clone( Hero.gear[:leather_corslet] )
-    @name = "Noble Armor"
-  end
-
-  def self.to_sym
-    :noble_armor
-  end
-end
-
-class GreatSplittingAxe < Weapon
-  def initialize
-    self.clone( Hero.weapons[:great_axe] )
-    @name = "Splitting Axe (Great)"
-  end
-  
-  def self.to_sym
-    :great_splitting_axe
-  end
-end
-
-class SplittingAxe < Weapon
-  def initialize
-    self.clone (Hero.weapons[:axe] )
-    @name = "Splitting Axe"
-  end
-  
-  def self.to_sym
-    :splitting_axe
-  end
-end
-
 
 class Beorning < Hero
   
@@ -55,20 +11,20 @@ class Beorning < Hero
   end
   
   def self.virtues #modifiers applied to self
-    super + [:brothers_to_bears, :night_goer, :skin_coat, :great_strength, :twice_baked_honey_cakes ] 
+    super
+    #super + [:brothers_to_bears, :night_goer, :skin_coat, :great_strength, :twice_baked_honey_cakes ] 
   end
   
-  def self.culturalEquipment
-    result = super
-    [GiantSlayingSpear, NobleArmor, GreatSplittingAxe, SplittingAxe].each do | x |
-      result[x.to_sym] = x
-    end
-    result
-  end
   
-  def self.rewards #modifiers applied to gear
-    super + culturalEquipment.keys 
-  end
+  def self.rewardGearData
+    [
+      {:base => :great_spear, :name => "Giant Slaying Spear", :quality => :giant_slaying},
+      {:base => :great_axe, :name => "Splitting Axe (Great)", :quality => :splitting},
+      {:base => :axe, :name => "Splitting Axe", :quality => :splitting},
+      {:base => :leather_corslet, :name => "Noble Armour", :quality => :noble}
+    ]
+  end   
+  
   
   def self.backgrounds
     result = Hash.new

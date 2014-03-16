@@ -1,0 +1,7 @@
+Helm:
+-heroclass=(Object.const_get(culture))
+-helms=heroclass.gear(reward.to_sym, "Helm" )
+%select(name="helm")
+	-helms.keys.each do | v |
+		%option{ :value => "#{v}" }
+			= helms[v].name	

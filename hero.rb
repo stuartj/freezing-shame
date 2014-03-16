@@ -13,6 +13,7 @@ class Hero < Opponent
   attr_accessor :favoured_weapon, :r_favoured_weapon
   
   @@cultures = Set.new
+  @@gear = Hash.new
   
   def initialize
     super
@@ -20,6 +21,9 @@ class Hero < Opponent
     @body = 0
     @wits = 0
     @heart = 0
+    @f_heart = 0
+    @f_wits = 0
+    @f_body = 0
     @fatigue = 0
     @stance = 9
     @wisdom = 0
@@ -28,9 +32,13 @@ class Hero < Opponent
   end
   
   def self.fromParams params
+    params.keys.each do | key |
+      puts key.to_s + ":" + params[key].to_s
+    end
     heroClass = (Object.const_get(params[:culture]));
     hero = heroClass.new
     background = hero.class.backgrounds[params[:background].to_sym]
+    hero.name = "Hero"
     hero.body = background[:body]
     hero.heart = background[:heart]
     hero.wits = background[:wits]
@@ -40,7 +48,19 @@ class Hero < Opponent
     hero.helm = params[:helm].to_sym
     hero.weapon_skill = params[:Weapon_skill].to_i
     hero.stance = params[:stance].to_i
-    hero.name = "Hero"
+    
+    3.times do |i|
+      tag = "favoured_attribute_" + (i + 1).to_s
+      case params[tag.to_sym]
+      when "body"
+        hero.f_body = i + 1
+      when "wits"
+        hero.f_wits = i + 1
+      when "heart"
+        hero.f_heart = i + 1
+      end
+    end
+    
     hero.armor.addQualities params
     hero.shield.addQualities params
     hero.weapon.addQualities params
@@ -64,63 +84,80 @@ class Hero < Opponent
   end
   
   
-  def self.culturalEquipment
-    {} # implemented by subclasses
-  end
   
-  def self.gear filter = nil, type = nil
-    result = super
-    return ((filter == nil && type == nil) ? result : self.filter( gear, filter, type ))
-  end
-  
-  def self.weapons filter = nil
-    result = super
-    result[:dagger] = Weapon.new( "Dagger", 3, 12, 12, 0, :one_handed, nil );
-    result[:short_sword] = Weapon.new( "Short Sword", 5, 10, 14, 1, :one_handed, nil)
-    result[:sword] = Weapon.new("Sword", 5, 10, 16, 2, :one_handed, nil)
-    result[:long_sword_1] = Weapon.new("Long Sword (1H)", 5, 10, 16, 3, :one_handed, nil)
-    result[:long_sword_2] = Weapon.new("Long Sword (2H)", 7, 10, 18, 3, :two_handed, nil)
-    result[:spear] = Weapon.new("Spear", 5, 9, 14, 2, :versatile, nil)
-    result[:great_spear] = Weapon.new("Great Spear", 9, 9, 16, 4, :two_handed, nil)
-    result[:axe] = Weapon.new("Axe", 5, 12, 18, 2, :one_handed, nil)
-    result[:great_axe] = Weapon.new("Great Axe", 9, 12, 20, 4, :two_handed, nil)
-    result[:long_hafted_axe_1] = Weapon.new("Long-hafted Axe (1H)", 5, 12, 18, 3, :one_handed, nil)
-    result[:long_hafted_axe_2] = Weapon.new("Long-hafted Axe (2H)", 7, 12, 20, 3, :two_handed, nil)
-    result[:bow] = Weapon.new("Bow", 5, 10, 14, 1, :ranged, nil)
-    result[:great_bow] = Weapon.new("Great bow", 7, 10, 16, 3, :ranged, nil)
-    return ((filter == nil) ? result : self.filter( result, filter, Weapon ))
-  end
-  
-  def self.filter( result, filter, type )
-    
-    if type.is_a? String
-      type = Object.const_get(type)
-    end
+  def self.gear type = nil, reward_symbol = nil
+    puts "Type: " + type.to_s + " Symbol: " + reward_symbol.to_s
 
-
-    if filter.is_a? String
-      filter = filter.split(',').collect{|e|e.to_sym}
+    if @@gear.size == 0
+      puts "Initialize master gear list"
+      @@gear[:dagger] = Weapon.new( "Dagger", 3, 12, 12, 0, :one_handed, nil );
+      @@gear[:short_sword] = Weapon.new( "Short Sword", 5, 10, 14, 1, :one_handed, nil)
+      @@gear[:sword] = Weapon.new("Sword", 5, 10, 16, 2, :one_handed, nil)
+      @@gear[:long_sword] = Weapon.new("Long Sword", 5, 10, 16, 3, :versatile, nil)
+      @@gear[:spear] = Weapon.new("Spear", 5, 9, 14, 2, :throwable, nil)
+      @@gear[:great_spear] = Weapon.new("Great Spear", 9, 9, 16, 4, :two_handed, nil)
+      @@gear[:axe] = Weapon.new("Axe", 5, 12, 18, 2, :one_handed, nil)
+      @@gear[:great_axe] = Weapon.new("Great Axe", 9, 12, 20, 4, :two_handed, nil)
+      @@gear[:long_hafted_axe] = Weapon.new("Long-hafted Axe", 5, 12, 18, 3, :versatile, nil)
+      @@gear[:bow] = Weapon.new("Bow", 5, 10, 14, 1, :ranged, nil)
+      @@gear[:great_bow] = Weapon.new("Great bow", 7, 10, 16, 3, :ranged, nil)
+      @@gear[:no_shield] = Shield.new("None", 0, 0)
+      @@gear[:no_helm] = Helm.new("None", 0, 0)
+      @@gear[:no_armor] = Armor.new("None", 0, 0)
+      @@gear[:leather_shirt] = Armor.new("Leather shirt", 1, 4)
+      @@gear[:leather_corslet] = Armor.new("Leather corslet", 2, 8)
+      @@gear[:mail_shirt] = Armor.new("Mail shirt", 3, 12)
+      @@gear[:coat_of_mail] = Armor.new("Coat of mail", 4, 16)
+      @@gear[:mail_hauberk] = Armor.new("Mail hauberk", 5, 20)
+      @@gear[:cap] = Helm.new("Cap of iron and leather", 1, 2)
+      @@gear[:helm] = Helm.new("Helm", 4, 6)
+      @@gear[:buckler] = Shield.new("Buckler", 1, 1)
+      @@gear[:shield] = Shield.new("Shield", 2, 2)
+      @@gear[:great_shield] = Shield.new("Great shield", 3, 3)
     end
     
-    result.keys.each do |key|
-      if result[key].class != type
-        result.delete key
+    rg = self.rewardGear @@gear
+    if reward_symbol != nil && (rg.keys.include? reward_symbol)
+      item = rg[reward_symbol]
+      if item != nil        
+        return { reward_symbol => item }
       end
     end
     
-    if filter.is_a? Array
-      puts filter
-      gear = self.culturalEquipment
-      gear.keys.each do |key|
-        puts key
-        if (filter.include? key) && (culturalEquipment[key].superclass == type )
-          puts "Key: " + key.to_s + " found!"
-          result[key] = culturalEquipment[key].new
-        end
+        
+    if type != nil && type != "None"
+      type = (type.is_a? String) ? Object.const_get(type) : type
+      return @@gear.select{ |k,v| v.is_a? type }
+    end
+    
+    @@gear
+    # return ((filter == nil) ? result : self.filter( result, filter, Weapon ))
+  end
+  
+  def self.rewardGear gearList=nil
+    result = {}
+    if !gearList
+      gearList = self.gear
+    end
+   
+    data = self.rewardGearData
+    data.each do |d|
+      if gearList.keys.include? d[:base]
+        item = gearList[d[:base]].clone d[:name]
+        item.addQuality d[:quality]
+        result[item.name2sym] = item
+      else
+        item = Modifier.new( d[:name], 0 )
+        result[d[:quality]] = item
       end
-    end   
+    end
     result
   end
+ 
+  def self.rewardGearData
+    [] # implemented by subclasses
+  end
+   
   
 
   def hasVirtue? virtue
@@ -174,15 +211,39 @@ class Hero < Opponent
   end
 
   def self.virtues #modifiers applied to gear
-    super + [:confidence, :dour_handed, :expertise, :fell_handed, :gifted, :resilience ] 
+    result = {}
+    result[:confidence] = {:name => "Confidence", :implemented => false}
+    result[:dour_handed] = {:name => "Dour-handed", :implemented => false}
+    result[:expertise] = {:name => "Expertise", :implemented => false}
+    result[:fell_handed] = {:name => "Fell-handed", :implemented => false}
+    result[:gifted] = {:name => "Gifted", :implemented => false}
+    result[:resilience] = {:name => "Resilience", :implemented => false}
+    result
   end
   
   def self.rewards #modifiers applied to self
     # problem....some qualities apply only to some armor items...
     # maybe compare qualities handled by item to qualities avaialble to character?
-    super + [:cunning_make, :close_fitting, :reinforced, :grievous, :keen, :fell] 
+    result = {}
+    result[:cunning_make_armor] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => false}
+    result[:cunning_make_shield] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => false}
+    result[:cunning_make_helm] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => false}
+    result[:close_fitting_armor] = {:type => "modifier", :name => "Close Fitting (Armor)", :implemented => false}
+    result[:close_fitting_helm] = {:type => "modifier", :name => "Close Fitting (Helm)", :implemented => false}
+    result[:grievous] = {:type => "modifier", :name => "Grievous", :implemented => true}
+    result[:keen] = {:type => "modifier", :name => "Keen", :implemented => true}
+    result[:fell] = {:type => "modifier", :name => "Fell", :implemented => true}
+    
+    if( self.superclass == Hero )
+      rg = self.rewardGear
+      rg.keys.each do | key |
+        item = rg[key]
+        result[key] = { :type => item.class.to_s, :name => item.name, :implemented => true }
+      end
+    end
+    result
   end
-  
+
     
   
   def self.featList

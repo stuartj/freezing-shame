@@ -1,33 +1,5 @@
 require './hero'
 
-class DalishLongbow < Weapon
-  def initialize
-    self.clone Hero.weapons[:great_bow]
-    @name = "Dalish Longbow"
-  end
-  
-  def self.to_sym
-    :dalish_longbow
-  end
-end
-
-class SpearOfKingBladorthin < Weapon
-  def initialize
-    self.clone Hero.weapons[:spear]
-    @name = "Spear of King Bladorthin"
-  end
-
-  def self.to_sym
-    :spear_of_king_bladorthin
-  end
-end
-
-class TowerShield < Shield
-  def self.to_sym
-    :tower_shield
-  end
-end
-
 class Barding < Hero
   
   superclass.registerCulture self
@@ -41,20 +13,16 @@ class Barding < Hero
   end
   
   def self.virtues #modifiers applied to self
-    super + [:birthright, :fierce_shot, :kings_men, :swordmaster, :woeful_foresight ] 
+    super
+    #super + [:birthright, :fierce_shot, :kings_men, :swordmaster, :woeful_foresight ] 
   end
   
-  def self.rewards #
-    super + [:dalish_longbow, :spear_of_king_bladorthin, :tower_shield] 
-  end
-  
-  
-  def self.culturalEquipment
-    result = {}
-    [DalishLongbow, SpearOfKingBladorthin, TowerShield].each do | x |
-      result[x.to_sym] = x
-    end
-    result
+  def self.rewardGearData 
+    [
+      { :base => :great_bow, :name => "Dalish Longbow", :quality => :dalish },
+      { :base => :spear, :name => "Spear of King Bladorthin", :quality => :bladorthin },
+      { :base => :great_shield, :name => "Tower Shield", :quality => :tower }
+      ]
   end
   
   

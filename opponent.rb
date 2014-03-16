@@ -42,12 +42,14 @@ class Opponent
     return Hash.new
   end
   
-  def self.weaponForSymbol aSymbol
-    list = self.weapons
+  def self.gearForSymbol aSymbol, type
+    list = self.gear type, nil
     if list.include? aSymbol 
       return list[aSymbol]
+    elsif (rg = self.rewardGear).keys.include? aSymbol
+      return rg[aSymbol]
     else
-      return Weapon.fist 
+      return list[:none] # I think this is going to break for weapon
     end
   end
   
@@ -55,65 +57,19 @@ class Opponent
     if newWeapon.class == Weapon
       @weapon = newWeapon
     elsif newWeapon.class == Symbol
-      @weapon = self.class.weaponForSymbol newWeapon
+      @weapon = self.class.gearForSymbol newWeapon, Weapon
     else
       puts "Error setting weapon: sent class " + newWeapon.class.to_s
     end
     @weapon
   end
-      
-  def self.rewards #modifiers applied to gear
-    [] #array of symbols; implemented by sub-classes
-  end
   
-  def self.virtues #modifiers applied to self
-    [] #array of symbols; implemented by sub-classes
-  end
-  
-  def self.gear filter = nil, type = nil
-    result = Hash.new
-    result[:no_shield] = Shield.new("None", 0, 0)
-    result[:no_helm] = Helm.new("None", 0, 0)
-    result[:no_armor] = Armor.new("None", 0, 0)
-    result[:leather_shirt] = Armor.new("Leather shirt", 1, 4)
-    result[:leather_corslet] = Armor.new("Leather corslet", 2, 8)
-    result[:mail_shirt] = Armor.new("Mail shirt", 3, 12)
-    result[:coat_of_mail] = Armor.new("Coat of mail", 4, 16)
-    result[:mail_hauberk] = Armor.new("Mail hauberk", 5, 20)
-    result[:cap] = Helm.new("Cap of iron and leather", 1, 2)
-    result[:helm] = Helm.new("Helm", 4, 6)
-    result[:buckler] = Shield.new("Buckler", 1, 1)
-    result[:shield] = Shield.new("Shield", 2, 2)
-    result[:great_shield] = Shield.new("Great shield", 3, 3)
-    return result
-  end
-  
-  def self.shields filter = nil
-    self.gear.keep_if {|k,v| v.class == Shield }
-  end
-
-  def self.helms filter = nil
-    self.gear.keep_if {|k,v| v.class == Helm }
-  end
-  
-  def self.armors filter = nil
-    self.gear.keep_if {|k,v| v.class == Armor }
-  end
-
-  def self.armorForSymbol aSymbol
-    list = self.armors
-    if list.include? aSymbol 
-      return list[aSymbol]
-    else
-      return Armor.none 
-    end
-  end
   
   def armor=(newArmor)
     if newArmor.kind_of? Armor
       @armor = newArmor
     elsif newArmor.kind_of? Symbol
-      @armor = self.class.armorForSymbol newArmor
+      @armor = self.class.gearForSymbol newArmor, Armor
     else
       puts "Error setting armor: sent class " + newArmor.class.to_s
     end
@@ -124,7 +80,7 @@ class Opponent
     if newArmor.kind_of? Shield
       @shield = newArmor
     elsif newArmor.kind_of? Symbol
-      @shield = self.class.armorForSymbol newArmor
+      @shield = self.class.gearForSymbol newArmor, Shield
     else
       puts "Error setting shield: sent class " + newArmor.class.to_s
     end
@@ -135,12 +91,43 @@ class Opponent
     if newArmor.kind_of? Helm
       @helm = newArmor
     elsif newArmor.kind_of? Symbol
-      @helm = self.class.armorForSymbol newArmor
+      @helm = self.class.gearForSymbol newArmor, Helm
     else
       puts "Error setting helm: sent class " + newArmor.class.to_s
     end
     @heml
   end
+  
+  def self.rewardGear gearList=nil
+    {} # implemented by subclasses
+  end
+  
+      
+  def self.rewards #modifiers applied to gear
+    {} #implemented by sub-classes
+  end
+  
+  def self.virtues #modifiers applied to self
+    {} #implemented by sub-classes
+  end
+  
+  def self.gear filter = nil, type = nil
+    {}
+  end
+
+#  def self.shields filter = nil
+#    self.gear.keep_if {|k,v| v.class == Shield }
+#  end
+#
+#  def self.helms filter = nil
+#    self.gear.keep_if {|k,v| v.class == Helm }
+#  end
+#  
+#  def self.armors filter = nil
+#    self.gear.keep_if {|k,v| v.class == Armor }
+#  end
+
+
   
   def armor
     if @armor == nil
@@ -171,8 +158,11 @@ class Opponent
     0 # implemented by subclasses
   end
   
-  def wound
+  def wound record=nil
     @wounds += 1
+    if record
+      record.addEvent( self.name, :wound, @dice, self.wounds )
+    end
   end
     
   def reset
@@ -204,13 +194,13 @@ class Opponent
   
   def rollProtectionAgainst opponent, record
     tn = opponent.weapon.injury
-    self.dice.roll( self.protection, self.weary?, opponent.weapon.rollModifier )
+    mod = (opponent.dice.gandalf? && opponent.weapon.hasQuality?( :dalish ) ? -1 : 0 )
+    self.dice.roll( self.protection, self.weary?, mod )
     record.addEvent( opponent.name, :pierce, nil, nil )
     record.addEvent( self.name, :armor_check, @dice, tn )
     test = @dice.test opponent.weapon.injury
     if !test
-      self.wound
-      record.addEvent( self.name, :wound, @dice, self.wounds )
+      self.wound record
     end
   end
   
@@ -250,7 +240,9 @@ class Opponent
 
     record.addEvent( self.name, :damage, nil, damage )
     
-    if opponent.dice.feat >= opponent.weapon.edge
+    if (opponent.weapon.hasQuality?(:kings_blade) && (opponent.dice.tengwars > 0))
+      self.wound record
+    elsif opponent.dice.feat >= opponent.weapon.edge
       test = self.rollProtectionAgainst( opponent, record )
     end
   end

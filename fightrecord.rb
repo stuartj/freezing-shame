@@ -8,6 +8,19 @@ class FightRecord
     @events = []
   end
   
+  def lastDice
+    i=1
+    while(i <= @events.size)
+      d = @events[@events.size-i][:dice]
+      if d
+        return d
+      end
+      i += 1
+    end
+    puts "Error: no last dice in events"
+    nil
+  end
+      
   def self.compile array
     results = {}
     array.each do |record|

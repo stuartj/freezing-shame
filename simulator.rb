@@ -102,9 +102,12 @@ end
 
 get('/gear') do
   culture = ( (params.keys.include? "culture") ? params["culture"] : "Hero" )  
-  rewards = ((params.keys.include? "rewards") ? params["rewards"] : [] )
-  puts "Rewards: " + rewards.to_s
-  partial( :gear, :layout => false, :locals => {:culture => culture, :rewards=>rewards})
+  reward = ((params.keys.include? "reward") ? params["reward"] : "none" )
+  if params.keys.include? "type"
+    partial( :geartype, :layout => false, :locals => {:type => params["type"], :culture => culture, :reward=>reward})
+  else
+    partial( :gear, :layout => false, :locals => {:culture => culture})
+  end
 end
 
 get('/attributes') do
@@ -116,9 +119,12 @@ get('/feats') do
 end
 
 post('/masterform') do
+  params.keys.each do |key|
+    puts key + ":" + params[key]
+  end
   hero = Hero.fromParams params
   monster = Monster.fromParams params
-  iterations = params["iterations"].to_i
+  iterations = 10**(params["iterations"].to_i)
   deathmatch( hero, monster, (iterations == 1 ? 1 : 1000)  )  
 end
 

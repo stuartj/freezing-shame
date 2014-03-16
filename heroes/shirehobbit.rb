@@ -18,11 +18,15 @@ class ShireHobbit < Hero
   end
   
   def self.virtues #modifiers applied to self
-    super + [:art_of_disappearing, :brave_at_a_pinch, :fair_shot, :tough_in_the_fibre, :small_folk ] 
-  end
+    super # + [:art_of_disappearing, :brave_at_a_pinch, :fair_shot, :tough_in_the_fibre, :small_folk ] 
+  end  
   
-  def self.rewards #modifiers applied to gear
-    super + [:bow_of_the_north, :kings_blade, :lucky_armor] 
+  def self.rewardGearData
+    [
+      { :base => :bow, :name => "Bow of the North Downs", :quality => :north_downs },
+      { :base => :short_sword, :name => "King's Blade", :quality => :kings_blade },
+      { :base => :modifier, :name => "Lucky Armour", :quality => :lucky },
+    ]
   end
   
   def self.backgrounds

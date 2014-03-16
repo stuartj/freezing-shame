@@ -16,7 +16,7 @@ function setCulture(select) {
 }
 
 function updateRewards(reward) {
-	var parent = reward.parentNode;
+/*	var parent = reward.parentNode;
 	console.log(parent);
 	var params = "culture=" + parent.getAttribute('culture');
 	var rewards = new Array();
@@ -24,7 +24,7 @@ function updateRewards(reward) {
 	for(var i=0;i<reward.parentNode.childNodes.length;i++) {
 		var child = reward.parentNode.childNodes[i];
 		if( child.checked ) {
-			rewards[j++] = child.name; 
+			rewards[j++] = child.named; 
 		}
 	}
 	params += "&rewards=" + rewards;	
@@ -32,6 +32,31 @@ function updateRewards(reward) {
 	$.get( '/gear', params, function( data ) {
 		$( '#gear' ).html(data);
 	});
+*/
+
+	var type = reward.getAttribute('reward_type');
+	if( type != 'modifier'){
+		// uncheck related items
+		var parent = reward.parentNode;
+		for(var i=0;i<parent.childNodes.length;i++) {
+			var child = parent.childNodes[i];
+			// if it's a checkbox, and of the same reward_type 
+			if( child.type == "checkbox" && child.getAttribute('reward_type') == type && child != reward) {
+				child.checked = false;
+			}
+		}
+		
+		var params = "type=" + type;
+		params += "&culture=" + reward.getAttribute('culture');	
+		if( reward.checked){
+			params += "&reward=" + reward.name;	
+		}	
+		var partial_id = "#" + reward.getAttribute('reward_type').toLowerCase();
+		$.get( '/gear', params, function (data) {
+			$( partial_id ).html(data);
+		});
+	}
+	
 }
 
 function updateFavoured(button) {

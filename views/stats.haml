@@ -23,7 +23,7 @@
 			%td.stats
 				=key
 			%td.stats{:align=>"center"}
-				=((iterations - deaths) * 100 / iterations).to_s + "%"
+				=((iterations - deaths) * 100.0 / iterations).round(1).to_s + "%"
 			%td.stats{:align=>"center"}
 				=(hits * 100 / attacks).to_s + "%"
 			%td.stats{:align=>"center"}

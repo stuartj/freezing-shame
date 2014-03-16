@@ -1,35 +1,61 @@
 class Dice
   
-  attr_accessor :rolls, :feat, :weary
+  attr_accessor :rolls, :feats, :weary, :mod
   
   def initialize
     self.reset
   end
   
   def reset
-    @feat = 0
+    @feats = []
+    @mod = 0
     @weary = false
     @rolls = []
   end
   
   def sauron?
-    @feat == 11
+    self.feat == 0
   end
   
   def gandalf?
-    @feat == 12
+    self.feat == 12
+  end
+  
+  def feat
+    ((@mod < 0) ? @feats.min : @feats.max )
   end
   
   def to_s   
     returnString = "("
     
-    if self.sauron?
-      returnString += "S"
-    elsif self.gandalf?
-      returnString += "G"
+    if @mod == 0
+      if self.sauron?
+        returnString += "S"
+      elsif self.gandalf?
+        returnString += "G"
+      else
+        returnString += self.feat.to_s 
+      end
     else
-      returnString += @feat.to_s
+      case @feats[0]
+      when 0
+        returnString += "S"
+      when 12
+        returnString += "G"
+      else
+        returnString += @feats[0].to_s
+      end
+      returnString += ':'
+      case @feats[1]
+      when 0
+        returnString += "S"
+      when 12
+        returnString += "G"
+      else
+        returnString += @feats[1].to_s
+      end
     end
+    
     returnString += "|" 
     @rolls.each do |i|
       returnString += i.to_s
@@ -37,6 +63,7 @@ class Dice
     returnString += ")=" 
     
     #total
+    
     if self.gandalf?
       returnString += "A"
     elsif self.sauron?
@@ -80,7 +107,7 @@ class Dice
   end
   
   def total
-    @feat + ((@rolls.length > 0) ? @rolls.inject{|sum,x| sum + x } : 0)
+    self.feat + ((@rolls.length > 0) ? @rolls.inject{|sum,x| sum + x } : 0)
   end
   
   def tengwars
@@ -89,29 +116,25 @@ class Dice
   
   def clone
     d = Dice.new
-    d.feat = @feat
+    d.feats = @feats.dup
     d.rolls = @rolls
     d.weary = @weary
+    d.mod = @mod
     d
   end
   
-  def roll(dice, weary=false, advantage=0)
+  def roll(dice, weary=false, feat_mod=0)
     self.reset
     @weary = weary
-    @feat = rand(12) + 1
-    
-#    puts "Mod :" + mod.to_s
+    @feats.push(rand(12) + 1)
+    @mod = feat_mod
 
-    # options == 1 means roll feat twice take highest, options == -1 means take lowest
-    if advantage != 0
-      feat2 = rand(12) + 1
-      puts "Feat2: " + feat2.to_s
-      if advantage < 0 
-        @feat = [@feat,feat2].min
-      else
-        @feat = [@feat,feat2].max
-      end
+    # mod == 1 means roll feat twice take highest, options == -1 means take lowest
+    if @mod != 0
+      @feats.push( rand(12) + 1 )
     end
+    
+    @feats = @feats.map{|d| d == 11 ? 0 : d }
     
     
     dice.times do

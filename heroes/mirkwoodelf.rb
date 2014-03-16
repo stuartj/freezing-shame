@@ -17,12 +17,19 @@ class MirkwoodElf < Hero
   end
   
   def self.virtues #modifiers applied to self
-    super + [:deadly_archery, :elvish_dreams, :shadow_bane, :the_speakers, :woodelf_magic ] 
+    super
+    # super + [:deadly_archery, :elvish_dreams, :shadow_bane, :the_speakers, :woodelf_magic ] 
   end
   
-  def self.rewards #modifiers applied to gear
-    super + [:bitter_spear, :spearmans_shield, :woodland_bow] 
+  
+  def self.rewardGearData
+    [
+      { :base => :spear, :name => "Bitter Spear", :quality => :bitter },
+      { :base => :buckler, :name => "Spearman's Shield", :quality => :spearmans },
+      { :base => :bow, :name => "Woodland Bow", :quality => :woodland }
+    ]
   end
+  
   
   def self.backgrounds
     result = Hash.new

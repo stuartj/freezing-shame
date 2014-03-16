@@ -10,11 +10,27 @@ class EreborDwarf < Hero
   end
   
   
-  def self.weapons
-     result = super
-     result[:mattock] = Weapon.new( "Mattock", 8, 10, 18, 3, :two_handed, :smash_shield );
-     return result
-   end
+  def self.gear type=nil, symbol=nil
+    result = super
+    puts result.size.to_s
+    if result.size > 1 
+      result[:mattock] = Weapon.new( "Mattock", 8, 10, 18, 3, :two_handed, :smash_shield );
+    end
+    result
+  end
+  
+  def self.rewardGearData
+    [
+      { :base => :great_axe, :name => "Axe of the Azanulbizar", :quality => :azanulbizar}, 
+      { :base => :modifier, :name => "Dwarf-wrought Hauberk", :quality => :dwarf_wrought },
+      { :base => :helm, :name => "Helm of Awe", :quality => :awe}
+    ] 
+  end 
+  
+  def totalFatigue
+    [super - @f_heart, 0].max
+  end
+  
    
    def self.enduranceBase
      28
@@ -25,13 +41,10 @@ class EreborDwarf < Hero
    end
    
    def self.virtues #modifiers applied to self
-     super + [:broken_spells, :durins_way, :old_hatred, :ravens_of_the_mountain, :the_stiff_neck_of_dwarves ] 
+     super
+#     super + [:broken_spells, :durins_way, :old_hatred, :ravens_of_the_mountain, :the_stiff_neck_of_dwarves ] 
    end
 
-   def self.rewards #modifiers applied to gear
-     super + [:axe_of_the_azanulbizar, :dwarf_wrought_hauberk, :helm_of_awe] 
-   end
-   
    def self.backgrounds
      result = Hash.new
      result[:a_life_of_toil] = {:name => "A Life of Toil",:body => 6, :heart => 2, :wits => 6}

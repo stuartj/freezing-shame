@@ -13,31 +13,35 @@ class Equipment
   end
   
   # use this for cloning equipment
-  def clone( base_item )
-    @name = base_item.name
-    @encumbrance = base_item.encumbrance
+  
+  def self.displayName
+    self.to_s
+  end
+  
+  def name2sym
+    @name.gsub(/[^a-zA-Z\d\s-]/,"").gsub(/[-\s]/,'_').downcase.to_sym
   end
   
   def addQualities symbols
     symbols.keys.each do |s|
-      if self.qualityList.include? s.to_sym
-        self.applyQuality s.to_sym
-      end
+      @qualities.add s
     end
   end
   
-  def qualityList
-    [] # implemented by subclasses; list of all possible qualities
+  def hasQuality? symbol
+    @qualities.include? symbol
   end
   
-  
-  def applyQuality( symbol ) 
-    qualities.add symbol
-    puts symbol.to_s + " added to " + self.name
+  def addQuality( symbol ) 
+    @qualities.add symbol
   end    
   
   def self.to_sym
     :equipment
   end
   
+end
+
+class Modifier < Equipment
+  # this is a total hack to allow cultural rewards that modify equipment...
 end
