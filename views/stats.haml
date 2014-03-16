@@ -31,7 +31,7 @@
 			%td.stats{:align=>"center"}
 				=(pierces * 100 / attacks).to_s + "%"
 			%td.stats{:align=>"center"}
-				=((prots - wounds) * 100 / prots).to_s + "%"
+				=( prots > 0 ? (((prots - wounds) * 100 / prots).to_s + "%") : "N/A" )
 			
 		
 	

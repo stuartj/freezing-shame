@@ -74,6 +74,8 @@ class FightRecord
         result += event[:player] + " attacks and rolls " + event[:dice].to_s
       when :pierce 
         result += "Pierce!"
+      when :called_shot
+        result += "Called Shot!"
       when :armor_check
         result += event[:player] + " rolls armor: " + event[:dice].to_s + " vs. " + event[:value].to_s
       when :wound

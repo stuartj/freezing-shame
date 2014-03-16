@@ -13,6 +13,7 @@ class Monster < Opponent
   
   attr_accessor :attribute_level, :parry, :hate, :attributes
   attr_accessor :max_hate, :max_endurance
+  attr_accessor :sauron_rule
     
   def initialize
     super
@@ -20,13 +21,22 @@ class Monster < Opponent
     @parry = 0
     @attribute_level = 1
     @attributes = []
+    @sauron_rule = false
     @hate = 1
     @special_abilities = 0 #bit mask
   end
   
   def self.fromParams params
     monsterClass = (Object.const_get(params[:monsterclass]));
-    monsterClass.createType params[:monstertype]
+    m = monsterClass.createType params[:monstertype]
+    m.sauron_rule = params[:sauron_rule]
+    m
+  end
+  
+  def attackerRolledSauron
+    if @sauron_rule
+      @called_shot = true
+    end
   end
   
   

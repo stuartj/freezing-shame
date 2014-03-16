@@ -13,6 +13,7 @@ function setCulture(select) {
 	updateFormElement(select, 'backgrounds');
 	updateFormElement(select, 'feats');
 	updateFormElement(select, 'gear');
+	updateFormElement(select, 'submit_button')
 }
 
 function updateRewards(reward) {

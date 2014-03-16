@@ -61,8 +61,8 @@
 							Type:
 							#monstertype
 								= partial :monstertype, :layout => false, :locals => { :monsterclass => "None" }
-	
-				%input#submit_button(type="submit" value="Submit")
+				#submit_button
+					= partial :submit_button, :layout => false, :locals => { :title => "Fight!" }
 						
 						
 					

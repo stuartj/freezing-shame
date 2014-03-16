@@ -1,5 +1,3 @@
-
-
 require './opponent'
 require 'set'
 
@@ -37,7 +35,7 @@ class Hero < Opponent
     end
     heroClass = (Object.const_get(params[:culture]));
     hero = heroClass.new
-    background = hero.class.backgrounds[params[:background].to_sym]
+    background = hero.class.backgrounds[params[:background].to_sym] # need some error checking on this one
     hero.name = "Hero"
     hero.body = background[:body]
     hero.heart = background[:heart]

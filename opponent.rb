@@ -14,6 +14,7 @@ class Opponent
   attr_accessor :rweapon, :r_weapon_skill # ranged.  NYI
   #attr_accessor :weapon_name, :weapon_damage, :weapon_edge, :weapon_injury
   attr_accessor :conditions # catch-all for combat modifiers
+  attr_accessor :called_shot # will next attack be called shot?
 
   
   def maxEndurance
@@ -23,6 +24,7 @@ class Opponent
   def initialize
     puts "Opponent intializing"
     @conditions = Set.new
+    @called_shot = false
     @size = 3 # default size
   end
   
@@ -40,6 +42,10 @@ class Opponent
   
   def self.weapons filter = nil
     return Hash.new
+  end
+  
+  def attackerRolledSauron
+    #god this is an ugly way to do this....
   end
   
   def self.gearForSymbol aSymbol, type
@@ -237,14 +243,7 @@ class Opponent
       damage += opponent.damageBonus
     end
     @endurance -= damage
-
     record.addEvent( self.name, :damage, nil, damage )
-    
-    if (opponent.weapon.hasQuality?(:kings_blade) && (opponent.dice.tengwars > 0))
-      self.wound record
-    elsif opponent.dice.feat >= opponent.weapon.edge
-      test = self.rollProtectionAgainst( opponent, record )
-    end
   end
   
   def rally
@@ -264,12 +263,32 @@ class Opponent
 #    end
 
     self.roll( @weapon_skill )
+    
+    if( @dice.sauron? )
+      opponent.attackerRolledSauron
+    end
+    
     tn = opponent.tn self
     
     record.addEvent( self.name, :attack, @dice.clone, tn )
-    
+            
     if( @dice.test( opponent.tn self ) )
-      opponent.getHitBy self, record 
+      if( @called_shot )
+        record.addEvent( self.name, :called_shot, nil, nil )
+        if @dice.tengwars > 0
+          opponent.getHitBy self, record 
+          opponent.wound record
+        end
+        @called_shot = false
+      else
+        opponent.getHitBy self, record      
+      
+        if (self.weapon.hasQuality?(:kings_blade) && (self.dice.tengwars > 0))
+          opponent.wound record
+        elsif @dice.feat >= @weapon.edge
+          opponent.rollProtectionAgainst( opponent, record )
+        end
+      end
     end
     
     if nest > 40 

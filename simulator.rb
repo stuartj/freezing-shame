@@ -71,6 +71,26 @@ get '/index' do
   erb :index
 end
 
+get '/submit_button' do
+  title = "Fight!"
+  case params["culture"]
+  when "Beorning"
+    title = "Rawwwrrr!!!"
+  when "Barding"
+    title = "Go now and speed well!"
+  when "EreborDwarf"
+    title = "Khazad Dum!"
+  when "MirkwoodElf"
+    title = "Ai Ai! A Balrog!"
+  when "ShireHobbit"
+    title = "Attercop! Attercop!"
+  when "Woodman"
+    title = "Release the Hounds!"
+  end
+  
+  partial :submit_button, :layout => false, :locals => { :title => title }
+end
+
 get '/' do
 #  @b = Beorning.spearman
 
@@ -125,7 +145,7 @@ post('/masterform') do
   hero = Hero.fromParams params
   monster = Monster.fromParams params
   iterations = 10**(params["iterations"].to_i)
-  deathmatch( hero, monster, (iterations == 1 ? 1 : 1000)  )  
+  deathmatch( hero, monster, iterations  )  
 end
 
 post('/sethero') do
