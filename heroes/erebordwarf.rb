@@ -13,7 +13,8 @@ class EreborDwarf < Hero
   def self.gear type=nil, symbol=nil
     result = super
     puts result.size.to_s
-    if result.size > 1 
+    # this needs to be abstracted/generalized....
+    if result.size > 1 && (!type || type == Weapon)
       result[:mattock] = Weapon.new( "Mattock", 8, 10, 18, 3, :two_handed, :smash_shield );
     end
     result
