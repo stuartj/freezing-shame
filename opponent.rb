@@ -199,12 +199,12 @@ class Opponent
   end
   
   def rollProtectionAgainst opponent, record
-    tn = opponent.weapon.injury
+    tn = opponent.weaponInjury
     mod = (opponent.dice.gandalf? && opponent.weapon.hasQuality?( :dalish ) ? -1 : 0 )
     self.dice.roll( self.protection, self.weary?, mod )
     record.addEvent( opponent.name, :pierce, nil, nil )
     record.addEvent( self.name, :armor_check, @dice, tn )
-    test = @dice.test opponent.weapon.injury
+    test = @dice.test tn
     if !test
       self.wound record
     end
@@ -235,10 +235,24 @@ class Opponent
   def intimidate
   end
   
+  def weaponDamage
+    damage = @weapon.damage
+    if( @weapon.type == :versatile && @shield.value == 0 )
+      damage += 2
+    end
+    damage
+  end
   
+  def weaponInjury
+    injury = @weapon.injury
+    if( @weapon.type == :versatile && @shield.value == 0)
+      injury += 2
+    end
+    injury
+  end
   
   def getHitBy opponent, record
-    damage = opponent.weapon.damage
+    damage = opponent.weaponDamage
     opponent.dice.tengwars.times do
       damage += opponent.damageBonus
     end
@@ -286,7 +300,7 @@ class Opponent
         if (self.weapon.hasQuality?(:kings_blade) && (self.dice.tengwars > 0))
           opponent.wound record
         elsif @dice.feat >= @weapon.edge
-          opponent.rollProtectionAgainst( opponent, record )
+          opponent.rollProtectionAgainst( self, record )
         end
       end
     end
