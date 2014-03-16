@@ -54,18 +54,9 @@ class Dice
           returnString += "</span>"
         end
 
-        returnString += ( i == 0 ? ',' : '' ) # comma in between
+        returnString += ( i == 0 ? ':' : '' ) # colon in between
       end
           
-      returnString += ':'
-      case @feats[1]
-      when 0
-        returnString += "S"
-      when 12
-        returnString += "G"
-      else
-        returnString += @feats[1].to_s
-      end
     end
     
     returnString += "|" 
