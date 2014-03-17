@@ -61,6 +61,10 @@
 							Type:
 							#monstertype
 								= partial :monstertype, :layout => false, :locals => { :monsterclass => "None" }
+						%fieldset
+							%legend Stats
+							#monsterstats
+								= partial :monsterstats, :layout => false, :locals => { :stats => {} }
 				#submit_button
 					= partial :submit_button, :layout => false, :locals => { :title => "Fight!" }
 						

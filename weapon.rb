@@ -23,6 +23,10 @@ class Weapon < Equipment
     @called_shot_effect = called_shot_effect
   end
   
+  def to_s
+    @name + "( dmg: " + @damage.to_s + ", edge: " + @edge.to_s + ", inj: " + @injury.to_s + " )"
+  end
+  
   # use this for cloning equipment
   def clone( newname=nil )
     w = Weapon.new( (newname ? newname : @name ), @damage, @edge, @injury, @encumbrance, @type, @called_shot_effect)

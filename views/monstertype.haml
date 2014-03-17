@@ -1,5 +1,5 @@
 -if monsterclass != "None"
-	%select#monstertype{ :name => "monstertype"}
+	%select#monstertype{ :name => "monstertype", :monsterclass => monsterclass, :onchange => "updateFormElement( this, 'monsterstats')" }
 		%option{ :value => "None" }
 			Choose a Type...
 		-types=(Object.const_get(monsterclass)).types

@@ -138,11 +138,20 @@ get('/feats') do
   partial( :feats, :layout => false, :locals => { :culture => params[:culture]})
 end
 
+get('/monsterstats') do
+  monster = Monster.fromParams params
+  partial( :monsterstats, :layout => false, :locals => { :stats => monster.to_hash })
+end
+
 post('/masterform') do
-  params.keys.each do |key|
-    puts key + ":" + params[key]
-  end
+#  params.keys.each do |key|
+#    puts key + ":" + params[key]
+#  end
   hero = Hero.fromParams params
+  h = hero.to_hash
+  h.keys.each do |key|
+    puts key + " : " + h[key].to_s
+  end
   monster = Monster.fromParams params
   iterations = 10**(params["iterations"].to_i)
   deathmatch( hero, monster, iterations  )  

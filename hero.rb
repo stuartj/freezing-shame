@@ -87,6 +87,10 @@ class Hero < Opponent
     @@cultures.sort{ |a,b| a.to_s <=> b.to_s }
   end
   
+  def to_hash
+    { "Parry" => self.parry, "Protection" => (self.protection[0].to_s + "d + " + self.protection[1].to_s), "Weapon Damage" => self.weaponDamage, "Endurance" => self.maxEndurance, "Fatigue" => self.fatigue, "Weapon Edge" => @weapon.edge, "Weapon Injury" => @weapon.injury }
+  end
+  
   
   
   def self.gear type = nil, reward_symbol = nil
@@ -310,7 +314,7 @@ class Hero < Opponent
   end
   
   def parry
-    self.wits + (self.weapon.allows_shield? ? self.shield.value : 0 )
+    self.wits + ((@shield && self.weapon.allows_shield?) ? @shield.value : 0 )
   end
   
   def protection
