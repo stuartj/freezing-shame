@@ -28,11 +28,11 @@ class Orc < Monster
   
   def self.types
     result = {}
-    result[:chieftan] = { :name => "Orc Chieftan", :attribute_level => 5, :endurance => 20, :hate => 5, :parry => 4, :armor => 3, :shield => 3, :weapons => { :orc_axe => 3}, :abilities => [:hate_sunlight, :snake_like_speed, :horrible_strength, :commanding_voice] }
-    result[:great] = { :name => "Great Orc", :attribute_level => 7, :endurance => 48, :hate => 8, :parry => 5, :armor => 4, :shield => 2, :weapons => { :heavy_scimitar => 3, :broad_headed_spear => 3, :orc_axe => 2}, :abilities => [:horrible_strength, :commanding_voice, :hideous_toughness, :great_size]}
-    result[:snaga_tracker] = { :name => "Snaga Tracker", :attribute_level => 2, :endurance => 8, :hate => 2, :parry => 3, :armor => 2, :shield => 0, :weapons => { :bow_of_horn => 2, :jagged_knife => 2 }, :abilities => [:hate_sunlight, :snake_like_speed]}
-    result[:black_uruk] = { :name => "Black Uruk", :attribute_level => 5, :endurance => 20, :hate => 4, :parry => 5, :armor => 2, :shield => 2, :weapons => { :broad_bladed_sword => 2, :broad_headed_spear => 2 }, :abilities => [:horrible_strength] }
-    result[:messenger_of_lugburz] = { :name => "Messenger of Lugburz", :attribute_level => 4, :endurance => 18, :hate => 5, :parry => 4, :armor => 2, :weapons => { :heavy_scimitar => 2, :jagged_knife => 3}, :abilities => [:hate_sunlight, :snake_like_speed, :commanding_voice]}
+    result[:chieftan] = { :name => "Orc Chieftan", :attribute_level => 5, :endurance => 20, :size => 2, :hate => 5, :parry => 4, :armor => 3, :shield => 3, :weapons => { :orc_axe => 3}, :abilities => [:hate_sunlight, :snake_like_speed, :horrible_strength, :commanding_voice] }
+    result[:great] = { :name => "Great Orc", :attribute_level => 7, :endurance => 48, :size => 3, :hate => 8, :parry => 5, :armor => 4, :shield => 2, :weapons => { :heavy_scimitar => 3, :broad_headed_spear => 3, :orc_axe => 2}, :abilities => [:horrible_strength, :commanding_voice, :hideous_toughness, :great_size]}
+    result[:snaga_tracker] = { :name => "Snaga Tracker", :attribute_level => 2, :size => 1, :endurance => 8, :hate => 2, :parry => 3, :armor => 2, :shield => 0, :weapons => { :bow_of_horn => 2, :jagged_knife => 2 }, :abilities => [:hate_sunlight, :snake_like_speed]}
+    result[:black_uruk] = { :name => "Black Uruk", :attribute_level => 5, :size => 2, :endurance => 20, :hate => 4, :parry => 5, :armor => 2, :shield => 2, :weapons => { :broad_bladed_sword => 2, :broad_headed_spear => 2 }, :abilities => [:horrible_strength] }
+    result[:messenger_of_lugburz] = { :name => "Messenger of Lugburz", :size => 2, :attribute_level => 4, :endurance => 18, :hate => 5, :parry => 4, :armor => 2, :weapons => { :heavy_scimitar => 2, :jagged_knife => 3}, :abilities => [:hate_sunlight, :snake_like_speed, :commanding_voice]}
     result
   end
   

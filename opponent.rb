@@ -160,7 +160,7 @@ class Opponent
     self.class.enduranceBase + @body
   end
   
-  def parry
+  def parry opponent=nil
     0 # implemented by subclasses
   end
   
@@ -236,7 +236,7 @@ class Opponent
   def intimidate
   end
   
-  def weaponDamage
+  def weaponDamage record=nil
     damage = @weapon.damage
     if( @weapon.type == :versatile && @shield.value == 0 )
       damage += 2
@@ -253,13 +253,18 @@ class Opponent
   end
   
   def getHitBy opponent, record
-    damage = opponent.weaponDamage
+    damage = opponent.weaponDamage record
     opponent.dice.tengwars.times do
       damage += opponent.damageBonus
     end
-    @endurance -= damage
-    record.addEvent( self.name, :damage, nil, damage )
+    self.takeDamage opponent, damage, record
   end
+  
+  def takeDamage opponent, amount, record
+    @endurance -= amount
+    record.addEvent( self.name, :damage, nil, amount )
+  end
+    
   
   def rally
 
@@ -283,11 +288,12 @@ class Opponent
       opponent.attackerRolledSauron
     end
     
-    tn = opponent.tn self
+ #   tn = opponent.tn self
+    tn = self.tnFor opponent
     
     record.addEvent( self.name, :attack, @dice.clone, tn )
             
-    if( @dice.test( opponent.tn self ) )
+    if( @dice.test( tn ) )
       if( @called_shot )
         record.addEvent( self.name, :called_shot, nil, nil )
         if @dice.tengwars > 0

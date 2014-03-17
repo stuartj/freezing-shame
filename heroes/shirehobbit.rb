@@ -17,10 +17,27 @@ class ShireHobbit < Hero
     12
   end
   
-  def self.virtues #modifiers applied to self
-    super # + [:art_of_disappearing, :brave_at_a_pinch, :fair_shot, :tough_in_the_fibre, :small_folk ] 
-  end  
+  def parry opponent=nil
+    p = super
+    if(opponent && (opponent.size > 1) && (@feats.include? :small_folk))
+      puts "Small Folk triggered"
+      return p + @f_wits
+    end
+    p
+  end
   
+
+
+  def self.virtues 
+    result = super
+    result[:art_of_disappearing] = {:name => "Art of Disappearing", :implemented => false}
+    result[:brave_at_a_pinch] = {:name => "Brave at a Pinch", :implemented => false}
+    result[:fair_shot] = {:name => "Fair Shot", :implemented => false}
+    result[:tough_in_the_fibre] = {:name => "Tough in the Fibre", :implemented => false}
+    result[:small_folk] = {:name => "Small Folk", :implemented => true}
+    result
+  end
+    
   def self.rewardGearData
     [
       { :base => :bow, :name => "Bow of the North Downs", :quality => :north_downs },

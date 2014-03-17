@@ -15,6 +15,14 @@ class Beorning < Hero
     #super + [:brothers_to_bears, :night_goer, :skin_coat, :great_strength, :twice_baked_honey_cakes ] 
   end
   
+  def tnFor opponent  # TN to hit
+    target = @stance + opponent.parry
+    if( opponent.size > 2 && (@weapon.hasQuality? :giant_slaying))
+      target -= 4
+    end
+    target
+  end
+  
   
   def self.rewardGearData
     [

@@ -36,7 +36,7 @@ class Equipment
   
   def addQuality( symbol ) 
     @qualities.add symbol
-    puts self.class.to_s + " receives quality: " + symbol.to_s
+#    puts self.class.to_s + " receives quality: " + symbol.to_s
   end    
   
   def encumbrance

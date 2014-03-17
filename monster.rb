@@ -11,7 +11,7 @@ class Monster < Opponent
   
   @@monsters = nil
   
-  attr_accessor :attribute_level, :parry, :hate, :attributes
+  attr_accessor :attribute_level, :parry, :hate, :abilities
   attr_accessor :secondary_weapon
   attr_accessor :max_hate, :max_endurance
   attr_accessor :sauron_rule
@@ -21,7 +21,7 @@ class Monster < Opponent
     puts "Monster initializing"
     @parry = 0
     @attribute_level = 1
-    @attributes = []
+    @abilities = []
     @sauron_rule = false
     @hate = 1
     @special_abilities = 0 #bit mask
@@ -32,6 +32,34 @@ class Monster < Opponent
     m = monsterClass.createType params[:monstertype]
     m.sauron_rule = params[:sauron_rule]
     m
+  end
+  
+  def weaponDamage record=nil
+    damage = super
+    if( (@abilities.include? :horrible_strength) && @hate > 0)
+      damage += @attribute_level
+      if record
+        record.addEvent( self.name, :hate, nil, :horrible_strength.to_s )
+      end
+      self.spendHate record
+    end
+    damage
+  end
+  
+  def takeDamage( opponent, amount, record )
+    if( ( @abilities.include? :hideous_toughness ) && amount >= @attribute_level && @hate > 0 )
+      amount -= @attribute_level
+      record.addEvent( self.name, :hate, nil, :hideous_toughness.to_s )
+      self.spendHate record
+    end
+    super( opponent, amount, record ) # have to manually send params because damage may have changed? Not sure.
+  end
+  
+  def spendHate record=nil
+    @hate = @hate - 1
+    if( record && @hate < 1 )
+      record.addEvent( self.name, :out_of_hate, nil, nil )
+    end
   end
   
   def secondaryWeapon weapon
@@ -52,12 +80,13 @@ class Monster < Opponent
     {
       "Attribute Level" => self.attribute_level,
       "Endurance" => self.maxEndurance,
-      "Hate" => self.hate,
+      "Hate" => self.max_hate,
       "Weapon Skill" => self.weapon_skill,
-      "Primary Weapon" => @weapon.to_s,
+      "Weapon" => @weapon.to_s,
 #      "Secondary Weapon" => ( @secondary_weapon ? @secondary_weapon.to_s : "None"),
-      "Armor" => self.protection[0].to_s + "d +" + self.protection[1].to_s,
-      "Parry" => self.parry
+      "Protection" => self.protection[0].to_s + "d +" + self.protection[1].to_s,
+      "Parry" => self.parry,
+      "Special Abilities" => @abilities.join(", ")
     }
   end
   
@@ -76,11 +105,12 @@ class Monster < Opponent
     puts typeSymbol
     type = self.class.types[typeSymbol.to_sym]
     @name = type[:name]
-    @abilities = type[:abilities]
+    @abilities = type[:abilities].dup  #.collect{|x| x.to_sym} 
     @attribute_level = type[:attribute_level]
     @max_hate = type[:hate]
     @max_endurance = type[:endurance]
     @armor = type[:armor]
+    @size = type[:size]
     @parry = type[:parry]
     @shield = type[:shield]
     weaponKey = weapon ? weapon : type[:weapons].keys[0]; #default to first weapon
@@ -156,13 +186,21 @@ class Monster < Opponent
   end
   
   
-  def parry
+  def parry opponent=nil
     @parry + ((@shield && @weapon.allows_shield?) ? @shield : 0)
   end
   
   def reset
     super
     @hate = @max_hate
+  end
+  
+  def tnFor opponent
+    if opponent.kind_of? Hero
+      opponent.stance + (opponent.parry self)
+    else
+      0 # ....not sure when this would happen....
+    end
   end
   
   def tn opponent 
@@ -179,7 +217,7 @@ class Monster < Opponent
   
   
   def weary?
-    super || (@hate == 0)
+    super || (@hate < 1)
   end
   
   def damageBonus

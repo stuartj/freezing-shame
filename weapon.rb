@@ -24,7 +24,7 @@ class Weapon < Equipment
   end
   
   def to_s
-    @name + "( dmg: " + @damage.to_s + ", edge: " + @edge.to_s + ", inj: " + @injury.to_s + " )"
+    @name + "( dmg: " + @damage.to_s + ", edge: " + @edge.to_s + ", inj: " + @injury.to_s + " )" + (@qualities.size > 0 ? (", q: " + @qualities.to_a.join(",")) : "" )
   end
   
   # use this for cloning equipment

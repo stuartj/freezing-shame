@@ -46,10 +46,11 @@ class Hero < Opponent
     hero.helm = params[:helm].to_sym
     hero.weapon_skill = params[:Weapon_skill].to_i
     hero.stance = params[:stance].to_i
-    self.virtues.keys.each do |v|
+    hero.class.virtues.keys.each do |v|
+#      puts "Virtue Key: " + v.to_s
       if params.keys.include? v.to_s
         hero.addVirtue v
-        puts "Virtue found: " + v.to_s
+#        puts "Virtue found: " + v.to_s
       end
     end
     
@@ -88,7 +89,17 @@ class Hero < Opponent
   end
   
   def to_hash
-    { "Parry" => self.parry, "Protection" => (self.protection[0].to_s + "d + " + self.protection[1].to_s), "Weapon Damage" => self.weaponDamage, "Endurance" => self.maxEndurance, "Fatigue" => self.fatigue, "Weapon Edge" => @weapon.edge, "Weapon Injury" => @weapon.injury }
+    { 
+      "Body" => @body.to_s + "(" + @f_body.to_s + ")",
+      "Hearth" => @heart.to_s + "(" + @f_heart.to_s + ")",
+      "Wits" => @wits.to_s + "(" + @f_wits.to_s + ")",
+      "Parry" => self.parry, 
+      "Protection" => (self.protection[0].to_s + "d + " + self.protection[1].to_s), 
+      "Weapon" => self.weapon.to_s, 
+      "Endurance" => self.maxEndurance, 
+      "Fatigue" => self.fatigue,
+      "Virtues" => "(" + @feats.to_a.join(", ") + ")" 
+      }
   end
   
   
@@ -228,7 +239,7 @@ class Hero < Opponent
     @f_wits = favoured_bonus
   end
 
-  def self.virtues #modifiers applied to gear
+  def self.virtues 
     result = {}
     result[:confidence] = {:name => "Confidence", :implemented => false}
     result[:dour_handed] = {:name => "Dour-handed", :implemented => true}
@@ -274,7 +285,7 @@ class Hero < Opponent
     @body
   end
   
-  def weaponDamage
+  def weaponDamage record=nil
     damage = super
     if (self.hasVirtue? :dour_handed) && (@weapon.type == :ranged)
       damage += 1
@@ -313,8 +324,8 @@ class Hero < Opponent
     h
   end
   
-  def parry
-    self.wits + ((@shield && self.weapon.allows_shield?) ? @shield.value : 0 )
+  def parry opponent=nil
+    ((@conditions.include? :bewildered) ? 0 : self.wits) + ((@shield && self.weapon.allows_shield?) ? @shield.value : 0 )
   end
   
   def protection
@@ -323,12 +334,16 @@ class Hero < Opponent
   
   
   
-  def tn opponent  # this is TN to get hit; opponent argument only there for monsters
+  def tn opponent  # this is TN to get hit
     @stance + ((@conditions.include? :bewildered) ? 0 : self.parry)
   end
   
   def alive?
     return super && wounds < 2
+  end
+  
+  def tnFor opponent  # TN to hit
+    @stance + opponent.parry
   end
   
   

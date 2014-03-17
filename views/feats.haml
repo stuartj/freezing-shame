@@ -15,8 +15,9 @@
 	- virtues = heroclass.virtues
 	- virtues.keys.each do | v |
 		%p
-		%input{:type=>"checkbox", :name=>"#{v}", :disabled => !virtues[v][:implemented]}
-			= virtues[v][:name]
+		-if virtues[v][:implemented]
+			%input{:type=>"checkbox", :name=>"#{v}"}
+				= virtues[v][:name]
 
 
 

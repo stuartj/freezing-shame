@@ -74,6 +74,10 @@ class FightRecord
         result += event[:player] + " attacks and rolls " + event[:dice].to_s
       when :pierce 
         result += "Pierce!"
+      when :hate
+        result += event[:player] + " uses its <b><i>" + event[:value].to_s + "</i></b>"
+      when :out_of_hate
+        result += event[:player] + " --is out of Hate!"
       when :called_shot
         result += "Called Shot!"
       when :armor_check
