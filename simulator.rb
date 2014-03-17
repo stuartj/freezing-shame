@@ -139,9 +139,11 @@ get('/monsterstats') do
 end
 
 post('/masterform') do
-#  params.keys.each do |key|
-#    puts key + ":" + params[key]
-#  end
+  puts "*************************"
+  params.keys.each do |key|
+    puts key + ":" + params[key]
+  end
+  puts "**************************"
   token = FightRecord.generate_token
   hero = Hero.fromParams params
   h = hero.to_hash
@@ -150,6 +152,7 @@ post('/masterform') do
   end
   hero.token = token
   monster = Monster.fromParams params
+  monster.confirmAbilities params # can't do this inside constructor
   monster.token = token
   iterations = 10**(params["iterations"].to_i)
   deathmatch( hero, monster, iterations  )  

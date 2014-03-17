@@ -1,3 +1,10 @@
 -stats.keys.sort.each do | key |
 	%p
-		=key + ": " + stats[key].to_s
+		-if key != "Special Abilities"
+			=key + ": " + stats[key].to_s
+-if stats.include? "Special Abilities"
+	-stats["Special Abilities"].split(',').each do |s|
+		%p
+			%input{ :type => "checkbox", :name => s, :checked => true }
+				=s
+

@@ -34,6 +34,16 @@ class Monster < Opponent
     m
   end
   
+  def confirmAbilities params
+    symbols = params.keys.collect{|k| k.to_sym }
+    @abilities.to_a.each do | a |
+      if !(symbols.include? a)
+        @abilities.delete a
+        puts "Ability removed: " + a.to_s
+      end
+    end
+  end
+  
   def weaponDamage
     damage = super
     if( (@abilities.include? :horrible_strength) && @hate > 0)
@@ -77,7 +87,7 @@ class Monster < Opponent
 #      "Secondary Weapon" => ( @secondary_weapon ? @secondary_weapon.to_s : "None"),
       "Protection" => self.protection[0].to_s + "d +" + self.protection[1].to_s,
       "Parry" => self.parry,
-      "Special Abilities" => @abilities.join(", ")
+      "Special Abilities" => @abilities.join(',')
     }
   end
   
@@ -118,12 +128,16 @@ class Monster < Opponent
     @weapons = []
     array.each do | entry |
       weapon = self.weapons[entry[:type]]
-      if( weapon.type == :attribute )
-        weapon.damage = @attribute_level
+      if !weapon
+        puts "Missing weapon '" + :type.to_s + "' for " + @name
+      else
+        if( weapon.type == :attribute )
+          weapon.damage = @attribute_level
+        end
+        skill = entry[:skill]
+        newentry = { :weapon => weapon, :skill => skill}
+        @weapons.push newentry
       end
-      skill = entry[:skill]
-      newentry = { :weapon => weapon, :skill => skill}
-      @weapons.push newentry
     end
   end
   
