@@ -63,6 +63,11 @@ form{
 	font-size: 10px;
 }
 
+#output {
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
 table.stats {
 	border:1px;
 	border-color:#bbb;
