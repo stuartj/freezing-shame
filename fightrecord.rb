@@ -4,8 +4,54 @@ class FightRecord
   
   attr_accessor :events
   
+  @@records = {}
+  
   def initialize
     @events = []
+  end
+  
+  def self.getRecords token
+    @@records[token][:records]
+  end
+  
+  def self.lastFightFor token
+    @@records[token][:records].last
+  end
+  
+  def self.generate_token
+    token = ("t" + rand(100000).to_s).to_sym
+    @@records[token] = { :time_stamp => Time.now, :records => [] }
+    self.cleanup
+    token
+  end
+  
+  def self.newFight token
+    if token && (@@records.include? token)
+      records = @@records[token][:records]
+      records.push( FightRecord.new )
+      return true
+    end
+    return false
+  end
+  
+  def self.cleanup
+    @@records.keys.each do |key|
+      t = @@records[key][:time_stamp]
+      if (Time.now - t) > 60
+        @@records.delete(key)
+      end
+    end
+  end
+  
+  def self.addEvent token, name, type, dice, value=nil
+    if token && (@@records.include? token)
+      record = @@records[token][:records].last
+      if record
+        record.addEvent( name, type, dice, value )
+        return true
+      end
+    end
+    return false
   end
   
   def lastDice
@@ -21,34 +67,35 @@ class FightRecord
     nil
   end
       
-  def self.compile array
+  def self.compile token
+    array = self.getRecords(token)
     results = {}
     array.each do |record|
       record.events.each do |event|
-        if !results[event[:player]] 
+        actor = event[:player]
+        if !results[actor] 
           h = {:hits=>0,:weary=>0,:attacks=>0,:wounds=>0,:armor_checks=>0,:pierces=>0,:deaths=>0}
-          results[event[:player]] = h
+          results[actor] = h
         end
-      
-        stats = results[event[:player]]
+        entry = results[actor]
       
         case event[:type]
         when :attack
-          stats[:attacks] += 1
+          entry[:attacks] += 1
           if event[:dice].test event[:value]
-            stats[:hits] += 1
+            entry[:hits] += 1
           end
           if event[:dice].weary
-            stats[:weary] += 1
+            entry[:weary] += 1
           end
         when :pierce
-          stats[:pierces] += 1
+          entry[:pierces] += 1
         when :armor_check
-          stats[:armor_checks] += 1
+          entry[:armor_checks] += 1
         when :wound
-          stats[:wounds] += 1
+          entry[:wounds] += 1
         when :dies
-          stats[:deaths] += 1
+          entry[:deaths] += 1
         end
       end
     end
@@ -75,7 +122,12 @@ class FightRecord
       when :pierce 
         result += "Pierce!"
       when :hate
-        result += event[:player] + " uses its <b><i>" + event[:value].to_s + "</i></b>"
+        case event[:value]
+        when :craven
+          result += event[:player] + " is <b><i>craven</i></b> and tries to flee!"
+        else
+          result += event[:player] + " uses its <b><i>" + event[:value].to_s + "</i></b>"
+        end
       when :out_of_hate
         result += event[:player] + " --is out of Hate!"
       when :called_shot

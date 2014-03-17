@@ -285,7 +285,7 @@ class Hero < Opponent
     @body
   end
   
-  def weaponDamage record=nil
+  def weaponDamage
     damage = super
     if (self.hasVirtue? :dour_handed) && (@weapon.type == :ranged)
       damage += 1

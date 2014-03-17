@@ -13,6 +13,7 @@ def deathmatch( opponent1, opponent2, iterations )
   playerWins = 0
   stats = []
   iterations.times do | i |
+    FightRecord.newFight opponent1.token
     opponent1.reset
     opponent2.reset
     
@@ -20,9 +21,9 @@ def deathmatch( opponent1, opponent2, iterations )
 #      resultString = ""
 #    end
     if( rand(2) == 1 )
-      stats.push opponent1.attack( opponent2 )
+      stats.push opponent1.takeTurn( opponent2 )
     else
-      stats.push opponent2.attack( opponent1 )
+      stats.push opponent2.takeTurn( opponent1 )
     end
     if opponent1.alive?
       playerWins+=1
@@ -32,12 +33,6 @@ def deathmatch( opponent1, opponent2, iterations )
 #  resultString
 
 # if run once, return combat log as text
-  if iterations == 1
-    return stats.last.to_html   # turn this into a partial at some point
-  end
-  
-  #otherwise return stats page
-  partial( :stats, :locals => { :iterations => iterations, :stats => FightRecord.compile(stats)})
 end
 
 def statsToHtml compiledStats
@@ -147,14 +142,25 @@ post('/masterform') do
 #  params.keys.each do |key|
 #    puts key + ":" + params[key]
 #  end
+  token = FightRecord.generate_token
   hero = Hero.fromParams params
   h = hero.to_hash
   h.keys.each do |key|
     puts key + " : " + h[key].to_s
   end
+  hero.token = token
   monster = Monster.fromParams params
+  monster.token = token
   iterations = 10**(params["iterations"].to_i)
   deathmatch( hero, monster, iterations  )  
+  
+  if iterations == 1
+    return (FightRecord.lastFightFor token).to_html   # turn this into a partial at some point
+  end
+  
+  #otherwise return stats page
+  partial( :stats, :locals => { :iterations => iterations, :stats => FightRecord.compile(token)})
+  
 end
 
 post('/sethero') do

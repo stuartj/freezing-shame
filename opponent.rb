@@ -15,6 +15,7 @@ class Opponent
   #attr_accessor :weapon_name, :weapon_damage, :weapon_edge, :weapon_injury
   attr_accessor :conditions # catch-all for temporary combat modifiers
   attr_accessor :called_shot # will next attack be called shot?
+  attr_accessor :token # used for adding events to FightRecord 
 
   
   def maxEndurance
@@ -164,10 +165,10 @@ class Opponent
     0 # implemented by subclasses
   end
   
-  def wound record=nil
+  def wound
     @wounds += 1
-    if record
-      record.addEvent( self.name, :wound, @dice, self.wounds )
+    if @token
+      FightRecord.addEvent( @token, self.name, :wound, @dice, self.wounds )
     end
   end
     
@@ -198,16 +199,16 @@ class Opponent
     0 #overridden by subclasss
   end
   
-  def rollProtectionAgainst opponent, record
+  def rollProtectionAgainst opponent
     tn = opponent.weaponInjury
     mod = (opponent.dice.gandalf? && opponent.weapon.hasQuality?( :dalish ) ? -1 : 0 )
     self.dice.roll( self.protection[0], self.weary?, mod )
     self.dice.bonus = self.protection[1]
-    record.addEvent( opponent.name, :pierce, nil, nil )
-    record.addEvent( self.name, :armor_check, @dice, tn )
+    FightRecord.addEvent( @token, self.name, :pierce, nil, nil )
+    FightRecord.addEvent( @token, self.name, :armor_check, @dice, tn )
     test = @dice.test tn
     if !test
-      self.wound record
+      self.wound
     end
   end
   
@@ -236,33 +237,42 @@ class Opponent
   def intimidate
   end
   
-  def weaponDamage record=nil
-    damage = @weapon.damage
-    if( @weapon.type == :versatile && @shield.value == 0 )
+  def weaponDamage 
+    damage = self.weapon.damage
+    if( self.weapon.type == :versatile && @shield.value == 0 )
       damage += 2
     end
     damage
   end
   
   def weaponInjury
-    injury = @weapon.injury
-    if( @weapon.type == :versatile && @shield.value == 0)
+    injury = self.weapon.injury
+    if( self.weapon.type == :versatile && @shield.value == 0)
       injury += 2
     end
     injury
   end
   
-  def getHitBy opponent, record
-    damage = opponent.weaponDamage record
+  def getHitBy opponent
+    damage = opponent.weaponDamage
     opponent.dice.tengwars.times do
       damage += opponent.damageBonus
     end
-    self.takeDamage opponent, damage, record
+    self.takeDamage opponent, damage
+    opponent.hit self #just in case there are secondary actions
   end
   
-  def takeDamage opponent, amount, record
+  def hit opponent
+    # don't do anything extra; override in subclasses
+  end
+  
+  def post_hit opponent
+    # don't do anything extra, override in subclasses
+  end
+  
+  def takeDamage opponent, amount
     @endurance -= amount
-    record.addEvent( self.name, :damage, nil, amount )
+    FightRecord.addEvent( @token, self.name, :damage, nil, amount )
   end
     
   
@@ -270,60 +280,59 @@ class Opponent
 
   end
   
+  
+  def hit? opponent
+    (@dice.test self.tnFor opponent) && (opponent.hit_by? self, @dice )
+  end
+  
+  def hit_by? opponent, dice
+    true # potentially overriden by subclasses
+  end
+    
 
   
   # if opponent is still alive will attack back
-  def attack( opponent, record = nil, nest = 0 )
-    if record == nil
-      record = FightRecord.new
-    end
+  def attack( opponent)
     
-#    if resultString != nil
-#      resultString += "<br>" + self.name + " attacks " + opponent.name + " and rolls " + @dice.to_s
-#    end
-
-    self.roll( @weapon_skill )
+    self.roll( self.weapon_skill )
     
     if( @dice.sauron? )
       opponent.attackerRolledSauron
     end
     
- #   tn = opponent.tn self
     tn = self.tnFor opponent
     
-    record.addEvent( self.name, :attack, @dice.clone, tn )
-            
-    if( @dice.test( tn ) )
+    FightRecord.addEvent( @token, self.name, :attack, @dice.clone, tn )
+    
+    if( self.hit? opponent ) # give opponent one last chance to avoid...
       if( @called_shot )
-        record.addEvent( self.name, :called_shot, nil, nil )
+        FightRecord.addEvent( @token, self.name, :called_shot, nil, nil )
         if @dice.tengwars > 0
-          opponent.getHitBy self, record 
-          opponent.wound record
+          opponent.getHitBy self 
+          opponent.wound 
         end
         @called_shot = false
       else
-        opponent.getHitBy self, record      
+        opponent.getHitBy self      
       
         if (self.weapon.hasQuality?(:kings_blade) && (self.dice.tengwars > 0))
-          opponent.wound record
-        elsif @dice.feat >= @weapon.edge
-          opponent.rollProtectionAgainst( self, record )
+          opponent.wound 
+        elsif @dice.feat >= self.weapon.edge
+          opponent.rollProtectionAgainst self 
         end
       end
+      self.post_hit opponent  # just in case there are post hit actions
     end
+  end
     
-    if nest > 40 
-      puts "Depth: " + nest.to_s
-    end
-    
+  def takeTurn opponent, nest=0
+    self.attack( opponent )
     
     if( opponent.alive? )
-      opponent.attack( self, record, nest+1 )
+      opponent.takeTurn( self, nest+1 )
     else
-      record.addEvent( opponent.name, :dies, nil )
+      FightRecord.addEvent( @token, opponent.name, :dies, nil )
     end
-    
-    record
   end
 end
 

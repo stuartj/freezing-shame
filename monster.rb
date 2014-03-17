@@ -12,7 +12,6 @@ class Monster < Opponent
   @@monsters = nil
   
   attr_accessor :attribute_level, :parry, :hate, :abilities
-  attr_accessor :secondary_weapon
   attr_accessor :max_hate, :max_endurance
   attr_accessor :sauron_rule
     
@@ -24,6 +23,7 @@ class Monster < Opponent
     @abilities = []
     @sauron_rule = false
     @hate = 1
+    @current_weapon_index = 0
     @special_abilities = 0 #bit mask
   end
   
@@ -34,41 +34,32 @@ class Monster < Opponent
     m
   end
   
-  def weaponDamage record=nil
+  def weaponDamage
     damage = super
     if( (@abilities.include? :horrible_strength) && @hate > 0)
       damage += @attribute_level
-      if record
-        record.addEvent( self.name, :hate, nil, :horrible_strength.to_s )
-      end
-      self.spendHate record
+        FightRecord.addEvent( @token, self.name, :hate, nil, :horrible_strength.to_s )
+      self.spendHate
     end
     damage
   end
   
-  def takeDamage( opponent, amount, record )
+  def takeDamage( opponent, amount )
     if( ( @abilities.include? :hideous_toughness ) && amount >= @attribute_level && @hate > 0 )
       amount -= @attribute_level
-      record.addEvent( self.name, :hate, nil, :hideous_toughness.to_s )
-      self.spendHate record
+      FightRecord.addEvent( @token, self.name, :hate, nil, :hideous_toughness.to_s )
+      self.spendHate
     end
-    super( opponent, amount, record ) # have to manually send params because damage may have changed? Not sure.
+    super( opponent, amount ) # have to manually send params because damage may have changed? Not sure.
   end
   
-  def spendHate record=nil
+  def spendHate
     @hate = @hate - 1
-    if( record && @hate < 1 )
-      record.addEvent( self.name, :out_of_hate, nil, nil )
+    if( @hate < 1 )
+      FightRecord.addEvent( @token, self.name, :out_of_hate, nil, nil )
     end
   end
   
-  def secondaryWeapon weapon
-    primary = @weapon
-    self.weapon = weapon
-    @secondary_weapon = @weapon
-    @weapon = primary
-    @secondary_weapon
-  end
   
   def attackerRolledSauron
     if @sauron_rule
@@ -82,7 +73,7 @@ class Monster < Opponent
       "Endurance" => self.maxEndurance,
       "Hate" => self.max_hate,
       "Weapon Skill" => self.weapon_skill,
-      "Weapon" => @weapon.to_s,
+      "Weapon" => self.weapon.to_s,
 #      "Secondary Weapon" => ( @secondary_weapon ? @secondary_weapon.to_s : "None"),
       "Protection" => self.protection[0].to_s + "d +" + self.protection[1].to_s,
       "Parry" => self.parry,
@@ -113,14 +104,45 @@ class Monster < Opponent
     @size = type[:size]
     @parry = type[:parry]
     @shield = type[:shield]
-    weaponKey = weapon ? weapon : type[:weapons].keys[0]; #default to first weapon
-    self.weapon = self.weapons[weaponKey];
-    if( type[:weapons].size > 0 )
-      self.secondary_weapon = type[:weapons].keys[1] # this is a pile of shit...need to refactor
-    end
-    @weapon_skill = type[:weapons][weaponKey]
+    self.parseWeapons type[:weapons]
+#    weaponKey = weapon ? weapon : type[:weapons].keys[0]; #default to first weapon
+#    self.weapon = self.weapons[weaponKey];
+#    if( type[:weapons].size > 0 )
+#      self.secondary_weapon = type[:weapons].keys[1] # this is a pile of shit...need to refactor
+#    end
+#    @weapon_skill = type[:weapons][weaponKey]
     self
   end
+  
+  def parseWeapons array
+    @weapons = []
+    array.each do | entry |
+      weapon = self.weapons[entry[:type]]
+      if( weapon.type == :attribute )
+        weapon.damage = @attribute_level
+      end
+      skill = entry[:skill]
+      newentry = { :weapon => weapon, :skill => skill}
+      @weapons.push newentry
+    end
+  end
+  
+  def weapon
+    if @weapons && @weapons.size > 0
+      @weapons[@current_weapon_index][:weapon]
+    else
+      super
+    end
+  end
+  
+  def weapon_skill
+    if @weapons && @weapons.size > 0
+      @weapons[@current_weapon_index][:skill]
+    else
+      super
+    end
+  end
+      
   
   def self.createType typeSymbol, weapon=nil
     self.new.initFromType typeSymbol, weapon
@@ -185,9 +207,31 @@ class Monster < Opponent
     @max_endurance
   end
   
+  def hit_by? opponent, dice
+    if( @abilities.include? :snake_like_speed )
+      tn = opponent.tnFor self
+      d = dice.total
+      if (d > tn) && ((d - tn) < (self.parry opponent))
+        FightRecord.addEvent( @token, @name, :hate, nil, :snake_like_speed )
+        self.spendHate 
+        return false
+      end
+    end
+    super
+  end
+  
+  def post_hit opponent
+    if ( opponent.alive? && @current_weapon_index == 0 && (@abilities.include? :savage_assault) && (@dice.tengwars > 0) )
+      @current_weapon_index = ((@weapons.size > 1) ? 1 : 0 )
+      FightRecord.addEvent( @token, @name, :hate, nil, :savage_assault )
+      self.attack opponent
+    end
+    @current_weapon_index = 0      
+  end
+  
   
   def parry opponent=nil
-    @parry + ((@shield && @weapon.allows_shield?) ? @shield : 0)
+    @parry + ((@shield && self.weapon.allows_shield?) ? @shield : 0)
   end
   
   def reset
@@ -212,7 +256,12 @@ class Monster < Opponent
   end
   
   def alive?
-    return super && (wounds < ((@abilities.include? :great_size) ? 2 : 1))
+    if( @abilities.include? :craven && @hate < 1 )
+      FightRecord.addEvent( @token, :hate, :flees, nil, :craven)
+      return false
+    else
+      return super && (wounds < ((@abilities.include? :great_size) ? 2 : 1))
+    end
   end
   
   
