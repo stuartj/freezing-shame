@@ -7,7 +7,7 @@ class Hero < Opponent
   attr_accessor :f_body, :f_wits, :f_heart # favoured value bonus (e.g., delta, not total)
   attr_accessor :fatigue, :stance
   attr_accessor :wisdom, :valor
-  attr_accessor :virtues #bitmask; generic for Virtues AND Rewards
+  attr_accessor :feats #generic for Virtues AND Rewards
   attr_accessor :favoured_weapon, :r_favoured_weapon
   
   @@cultures = Set.new
@@ -26,13 +26,13 @@ class Hero < Opponent
     @stance = 9
     @wisdom = 0
     @valor = 0
-    @virtues = Set.new
+    @feats = Set.new
   end
   
   def self.fromParams params
-    params.keys.each do | key |
-      puts key.to_s + ":" + params[key].to_s
-    end
+#    params.keys.each do | key |
+#     puts key.to_s + ":" + params[key].to_s
+#    end
     heroClass = (Object.const_get(params[:culture]));
     hero = heroClass.new
     background = hero.class.backgrounds[params[:background].to_sym] # need some error checking on this one
@@ -46,6 +46,12 @@ class Hero < Opponent
     hero.helm = params[:helm].to_sym
     hero.weapon_skill = params[:Weapon_skill].to_i
     hero.stance = params[:stance].to_i
+    self.virtues.keys.each do |v|
+      if params.keys.include? v.to_s
+        hero.addVirtue v
+        puts "Virtue found: " + v.to_s
+      end
+    end
     
     3.times do |i|
       tag = "favoured_attribute_" + (i + 1).to_s
@@ -59,10 +65,10 @@ class Hero < Opponent
       end
     end
     
-    hero.armor.addQualities params
-    hero.shield.addQualities params
-    hero.weapon.addQualities params
-    hero.helm.addQualities params
+    hero.armor.addParams params
+    hero.shield.addParams params
+    hero.weapon.addParams params
+    hero.helm.addParams params
     hero
   end
   	
@@ -159,11 +165,11 @@ class Hero < Opponent
   
 
   def hasVirtue? virtue
-    @virtues.include? virtue
+    @feats.include? virtue
   end
   
   def addVirtue virtue
-    @virtues.add virtue
+    @feats.add virtue
   end
   # 
   def self.enduranceBase
@@ -184,6 +190,16 @@ class Hero < Opponent
   
   def maxEndurance
     super + ((self.hasVirtue? :resilience) ? 2 : 0)
+  end
+  
+  def valourCheck? tn=14
+    @dice.roll( @valour, self.weary?, 0)
+    @dice.test tn
+  end
+  
+  def wisdomCheck tn=14
+    @dice.roll( @wisdom, self.weary?, 0)
+    @dice.test tn
   end
   
   
@@ -211,11 +227,11 @@ class Hero < Opponent
   def self.virtues #modifiers applied to gear
     result = {}
     result[:confidence] = {:name => "Confidence", :implemented => false}
-    result[:dour_handed] = {:name => "Dour-handed", :implemented => false}
+    result[:dour_handed] = {:name => "Dour-handed", :implemented => true}
     result[:expertise] = {:name => "Expertise", :implemented => false}
-    result[:fell_handed] = {:name => "Fell-handed", :implemented => false}
+    result[:fell_handed] = {:name => "Fell-handed", :implemented => true}
     result[:gifted] = {:name => "Gifted", :implemented => false}
-    result[:resilience] = {:name => "Resilience", :implemented => false}
+    result[:resilience] = {:name => "Resilience", :implemented => true}
     result
   end
   
@@ -223,11 +239,12 @@ class Hero < Opponent
     # problem....some qualities apply only to some armor items...
     # maybe compare qualities handled by item to qualities avaialble to character?
     result = {}
-    result[:cunning_make_armor] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => false}
-    result[:cunning_make_shield] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => false}
-    result[:cunning_make_helm] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => false}
-    result[:close_fitting_armor] = {:type => "modifier", :name => "Close Fitting (Armor)", :implemented => false}
-    result[:close_fitting_helm] = {:type => "modifier", :name => "Close Fitting (Helm)", :implemented => false}
+    result[:cunning_make_armor] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => true}
+    result[:cunning_make_shield] = {:type => "modifier", :name => "Cunning Make (Shield)", :implemented => true}
+    result[:cunning_make_helm] = {:type => "modifier", :name => "Cunning Make (Helm)", :implemented => true}
+    result[:close_fitting_armor] = {:type => "modifier", :name => "Close Fitting (Armor)", :implemented => true}
+    result[:close_fitting_helm] = {:type => "modifier", :name => "Close Fitting (Helm)", :implemented => true}
+    result[:reinforced] = { :type => "modifier", :name => "Reinforced (Shield)", :implemented => true}
     result[:grievous] = {:type => "modifier", :name => "Grievous", :implemented => true}
     result[:keen] = {:type => "modifier", :name => "Keen", :implemented => true}
     result[:fell] = {:type => "modifier", :name => "Fell", :implemented => true}
@@ -252,6 +269,18 @@ class Hero < Opponent
     # @favoured_weapon ? @body + @f_body : @body
     @body
   end
+  
+  def weaponDamage
+    damage = super
+    if (self.hasVirtue? :dour_handed) && (@weapon.type == :ranged)
+      damage += 1
+    end
+    if (self.hasVirtue? :fell_handed) && (@weapon.type != :ranged)
+      damage += 1
+    end
+    damage
+  end
+  
   
   def reset
     super
@@ -283,6 +312,11 @@ class Hero < Opponent
   def parry
     self.wits + (self.weapon.allows_shield? ? self.shield.value : 0 )
   end
+  
+  def protection
+    [(@armor ? @armor.value : 0), (@helm ? @helm.value : 0)]
+  end
+  
   
   
   def tn opponent  # this is TN to get hit; opponent argument only there for monsters

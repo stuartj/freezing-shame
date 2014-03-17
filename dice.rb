@@ -1,6 +1,6 @@
 class Dice
   
-  attr_accessor :rolls, :feats, :weary, :mod
+  attr_accessor :rolls, :feats, :weary, :mod, :bonus
   
   def initialize
     self.reset
@@ -9,6 +9,7 @@ class Dice
   def reset
     @feats = []
     @mod = 0
+    @bonus = 0
     @weary = false
     @rolls = []
   end
@@ -63,7 +64,16 @@ class Dice
     @rolls.each do |i|
       returnString += i.to_s
     end
-    returnString += ")=" 
+    returnString += ")"
+    
+    if @bonus != 0
+      returnString += "["
+      returnString += ((@bonus > 0) ? '+' : '-')
+      returnString += @bonus.to_s
+      returnString += "]"
+    end
+    
+    returnString += "="
     
     #total
     
@@ -110,7 +120,7 @@ class Dice
   end
   
   def total
-    self.feat + ((@rolls.length > 0) ? @rolls.inject{|sum,x| sum + x } : 0)
+    self.feat + ((@rolls.length > 0) ? @rolls.inject{|sum,x| sum + x } : 0) + @bonus
   end
   
   def tengwars
@@ -123,6 +133,7 @@ class Dice
     d.rolls = @rolls
     d.weary = @weary
     d.mod = @mod
+    d.bonus = @bonus
     d
   end
   

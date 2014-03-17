@@ -13,7 +13,7 @@ class Opponent
   attr_accessor :weapon, :weapon_skill
   attr_accessor :rweapon, :r_weapon_skill # ranged.  NYI
   #attr_accessor :weapon_name, :weapon_damage, :weapon_edge, :weapon_injury
-  attr_accessor :conditions # catch-all for combat modifiers
+  attr_accessor :conditions # catch-all for temporary combat modifiers
   attr_accessor :called_shot # will next attack be called shot?
 
   
@@ -51,9 +51,9 @@ class Opponent
   def self.gearForSymbol aSymbol, type
     list = self.gear type, nil
     if list.include? aSymbol 
-      return list[aSymbol]
+      return list[aSymbol].clone
     elsif (rg = self.rewardGear).keys.include? aSymbol
-      return rg[aSymbol]
+      return rg[aSymbol].clone
     else
       return list[:none] # I think this is going to break for weapon
     end
@@ -201,7 +201,8 @@ class Opponent
   def rollProtectionAgainst opponent, record
     tn = opponent.weaponInjury
     mod = (opponent.dice.gandalf? && opponent.weapon.hasQuality?( :dalish ) ? -1 : 0 )
-    self.dice.roll( self.protection, self.weary?, mod )
+    self.dice.roll( self.protection[0], self.weary?, mod )
+    self.dice.bonus = self.protection[1]
     record.addEvent( opponent.name, :pierce, nil, nil )
     record.addEvent( self.name, :armor_check, @dice, tn )
     test = @dice.test tn
@@ -211,7 +212,7 @@ class Opponent
   end
   
   def protection
-    0 + (@armor ? @armor.value : 0) + (@helm ? @helm.value : 0)
+    [(@armor ? @armor.value : 0), 0]
   end
   
   def dice

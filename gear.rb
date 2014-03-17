@@ -27,7 +27,9 @@ class Gear < Equipment
   
   # use this for cloning equipment
   def clone( newname = nil )
-    self.class.new( (newname ? newname : @name), @value, @encumbrance )
+    result = self.class.new( (newname ? newname : @name), @value, @encumbrance )
+    result.qualities = @qualities.dup
+    result
   end
   
 end
@@ -35,20 +37,47 @@ end
 class Protection < Gear
   
   def value
-    (@qualities.include? :close_fitting) ? @value + 1 : @value
+    @value
   end
   
 end
 
 class Armor < Protection
   def qualityList
-    [:cunning_make, :close_fitting] 
+    [:cunning_make_armor, :close_fitting_armor] 
   end
   
-
+  def value
+    return super + ((self.hasQuality? :close_fitting_armor) ? 1 : 0 )
+  end
+  
+  def encumbrance
+    val = super
+    if( self.hasQuality? :cunning_make_armor )
+      return [val - 2, 0].max
+    end
+    return val
+  end
 end 
 
 class Helm < Protection
+  def qualityList
+    [:cunning_make_helm, :close_fitting_helm] 
+  end
+  
+  def value
+    return super + ((self.hasQuality? :close_fitting_helm) ? 1 : 0 )
+  end
+  
+  def encumbrance
+    val = super
+    if( self.hasQuality? :cunning_make_helm )
+      return [val - 2, 0].max
+    end
+    return val
+  end
+    
+  
   
 end
 
@@ -63,8 +92,17 @@ class Shield < Gear
     @is_broken
   end
   
+  def encumbrance
+    val = super
+    if( self.hasQuality? :cunning_make_shield )
+      return [val - 2, 0].max
+    end
+    return val
+  end
+  
+  
   def qualityList
-    [:reinforced] # implemented by subclasses; list of all possible qualities
+    [:cunning_make_shield, :reinforced] # implemented by subclasses; list of all possible qualities
   end
   
   

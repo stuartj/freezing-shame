@@ -22,9 +22,11 @@ class Equipment
     @name.gsub(/[^a-zA-Z\d\s-]/,"").gsub(/[-\s]/,'_').downcase.to_sym
   end
   
-  def addQualities symbols
-    symbols.keys.each do |s|
-      @qualities.add s
+  def addParams params
+    params.keys.each do |key|
+      if (params[key] == "on") && (self.qualityList.include? key.to_sym)
+        self.addQuality key.to_sym
+      end
     end
   end
   
@@ -34,7 +36,12 @@ class Equipment
   
   def addQuality( symbol ) 
     @qualities.add symbol
+    puts self.class.to_s + " receives quality: " + symbol.to_s
   end    
+  
+  def encumbrance
+    @encumbrance
+  end
   
   def self.to_sym
     :equipment

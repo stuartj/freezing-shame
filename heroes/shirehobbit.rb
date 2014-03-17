@@ -40,5 +40,10 @@ class ShireHobbit < Hero
     result
   end
   
+  def wisdomCheck tn=14
+    @dice.roll( @wisdom, self.weary?, 1)
+    @dice.test tn
+  end
+  
   
 end

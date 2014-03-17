@@ -25,7 +25,9 @@ class Weapon < Equipment
   
   # use this for cloning equipment
   def clone( newname=nil )
-    Weapon.new( (newname ? newname : @name ), @damage, @edge, @injury, @encumbrance, @type, @called_shot_effect)
+    w = Weapon.new( (newname ? newname : @name ), @damage, @edge, @injury, @encumbrance, @type, @called_shot_effect)
+    w.qualities = @qualities.dup
+    w
   end
   
   def qualityList

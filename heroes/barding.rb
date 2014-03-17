@@ -37,6 +37,10 @@ class Barding < Hero
     result
   end
   
-  
+  #cultural blessing
+  def valourCheck? tn=14
+    @dice.roll( @valour, self.weary?, 1)
+    @dice.test tn
+  end
   
 end
