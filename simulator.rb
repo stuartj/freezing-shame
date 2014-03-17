@@ -75,17 +75,17 @@ get '/submit_button' do
   title = "Fight!"
   case params["culture"]
   when "Beorning"
-    title = "Rawwwrrr!!!"
+    title = '"Rawwwrrr!!!"'
   when "Barding"
-    title = "Go now and speed well!"
+    title = '"Go now and speed well!"'
   when "EreborDwarf"
-    title = "Khazad Dum!"
+    title = '"Khazad Dummmmm!"'
   when "MirkwoodElf"
-    title = "Ai Ai! A Balrog!"
+    title = '"Ai Ai! A Balrog!"'
   when "ShireHobbit"
-    title = "Attercop! Attercop!"
+    title = '"Attercop! Attercop!"'
   when "Woodman"
-    title = "Release the Hounds!"
+    title = '"Release the Hounds!"'
   end
   
   partial :submit_button, :layout => false, :locals => { :title => title }
