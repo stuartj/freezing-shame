@@ -1,5 +1,5 @@
 #wrapper{
-	width:66%
+	width:80%
 	margin:auto;
 }
 
@@ -17,13 +17,19 @@ body{
 	margin:20px;
 }
 
+#matchsettings, #monster {
+	float:left;
+	width: 30%;
+}
+
 .cultureandbackground, #attributes {
 	float:left;
 	width:auto;
 }
 
-#submit_button{
-	float:center;
+#submit_button {
+	font-family: sans-serif;
+	font-size: 16px;
 }
 
 #header{
@@ -59,9 +65,9 @@ p {  margin-top: 0em; margin-bottom: 0em; }
 #output {
 	font-family: sans-serif;
 	font-size: 14px;
-*	position:relative;
-*	float:none;
-	width:auto;
+	position:relative;
+	float:right;
+	width:60%;
 	height:auto;
 }
 
@@ -78,7 +84,7 @@ td.stats {
 
 #hero{
 	margin:12px 0;
-	width:auto;
+	width:40%;
 	float:left;
 	background-color:#ddd;
 	padding:20px;

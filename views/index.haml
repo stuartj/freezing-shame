@@ -51,10 +51,6 @@
 						
 					
 							
-				#matchsettings
-					%fieldset
-						%legend General Settings
-						= partial :matchsettings, :layout => false
 					
 				#monster		
 					%fieldset
@@ -77,10 +73,13 @@
 								-10.times do |i|
 									%option{ :value => i + 1}
 										=(i + 1).to_s
-				#submit_button
-					= partial :submit_button, :layout => false, :locals => { :title => "Fight!" }
-						
-						
+				#matchsettings
+					%fieldset
+						%legend General Settings
+						= partial :matchsettings, :layout => false
+						#submit_button
+							= partial :submit_button, :layout => false, :locals => { :title => "Fight!" }
+
 					
 			#output
 %script(src="/helpers.js")
