@@ -71,7 +71,6 @@ function updateRewards(reward) {
 
 function updateFavoured(button) {
 	//you can get the value from arguments itself
-	console.log( $('#sethero').serialize() );
 	var a = button.id.split("_");
 	var attribute = a.shift();
 	var value = a.shift();
@@ -101,12 +100,11 @@ function serializeElement( element ) {
 			returnString += element.attributes[i].value;
 		}
 	}
-	console.log(returnString);
 	return returnString
 };
 
 function runSimulation( form ){
-	console.log(form.serialize());
+//	console.log(form.serialize());
 };
 
 function setBackground( select ) {
@@ -122,7 +120,6 @@ function updateFormElement( source, destString ) {
 };
 
 function getMonsterTypes() {
-	console.log("What the fuck?");
 	$.post( "/monstertypes", $('#sethero').serialize(), function( data ) {
 		$( '#monstertypes' ).html(data);	
 	});
