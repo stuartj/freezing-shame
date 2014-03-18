@@ -5,7 +5,7 @@
 	- rewards = heroclass.rewards
 	- rewards.keys.each do | r |
 		%p
-		%input{:name => r, :type=>"checkbox", :culture=>culture, :reward_type => rewards[r][:type], :disabled => !rewards[r][:implemented], :onchange=>"updateRewards(this)"}
+		%input{:name => r, :type=>"checkbox", :culture=>culture, :reward_type => rewards[r][:type], :disabled => !rewards[r][:implemented], :onchange=>"updateRewards(this)", :title => rewards[r][:tooltip]}
 			%label{ :title => rewards[r][:tooltip] }
 				= rewards[r][:name]
 	
@@ -15,7 +15,7 @@
 	- virtues.keys.each do | v |
 		%p
 		-if virtues[v][:implemented]
-			%input{:type=>"checkbox", :name=>v }
+			%input{:type=>"checkbox", :name=>v, :title => virtues[v][:tooltip] }
 				%label{ :title => virtues[v][:tooltip] }
 					= virtues[v][:name] 
 

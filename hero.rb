@@ -270,9 +270,18 @@ class Hero < Opponent
     result[:fell] = {:type => "modifier", :name => "Fell", :tooltip => "Increase weapon injury rating by 2.", :implemented => true}
     
     if( self.superclass == Hero )
-      rg = self.rewardGearData
-      rg.each do | item |
-        result[item[:base]] = item.dup
+      rgd = self.rewardGearData
+      rg = self.rewardGear
+      # ok this is ugly
+      rg.keys.each do | key |
+        item = rg[key]
+        name = item.name
+        data = rgd.select{|x| x[:name] == name }.first
+        if data
+          result[key] = {:type => item.class.to_s.downcase, :name => name, :tooltip => data[:tooltip], :implemented => true }
+        else
+          puts key.to_s + " not found."
+        end
 #        item = rg[key]
 #        result[key] = { :type => item.class.to_s, :name => item.name, :implemented => true }
       end
