@@ -20,7 +20,7 @@ class Monster < Opponent
     puts "Monster initializing"
     @parry = 0
     @attribute_level = 1
-    @abilities = []
+    @abilities = {}
     @sauron_rule = false
     @hate = 1
     @current_weapon_index = 0
@@ -62,7 +62,8 @@ class Monster < Opponent
   
   def confirmAbilities params
     symbols = params.keys.collect{|k| k.to_sym }
-    @abilities.to_a.each do | a |
+    puts symbols.to_s
+    @abilities.keys.each do | a |
       if !(symbols.include? a)
         @abilities.delete a
         puts "Ability removed: " + a.to_s
