@@ -278,7 +278,7 @@ class Hero < Opponent
         name = item.name
         data = rgd.select{|x| x[:name] == name }.first
         if data
-          result[key] = {:type => item.class.to_s.downcase, :name => name, :tooltip => data[:tooltip], :implemented => true }
+          result[key] = {:type => item.class.to_s, :name => name, :tooltip => data[:tooltip], :implemented => true }
         else
           puts key.to_s + " not found."
         end

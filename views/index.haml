@@ -29,26 +29,27 @@
 					%fieldset
 						%legend
 							Hero
-						%p
+						%div.cultureandbackground
 							%label
 								Culture:
 							#cultures
 								= partial :cultures, :layout => false, :locals => { :culture => "None"}		
-						%p
 							Background:
 							#backgrounds
 								= partial :backgrounds, :layout => false, :locals => { :culture => "None", :background => "None"}
 						#attributes
 							= partial :attributes, :layout=>false,:locals => {:attributes =>{:body=>0,:heart=>0,:wits=>0}}
+							
 						#skills
 							= partial :skills, :layout => false
+							
+						#gear		
+							= partial :gear, :layout => "false", :locals => { :culture => "Hero" }
 							
 						#feats
 							= partial :feats, :layout => false, :locals => { :culture => "Hero" }
 						
 					
-					#gear		
-						= partial :gear, :layout => "false", :locals => { :culture => "Hero" }
 							
 				#matchsettings
 					%fieldset
@@ -69,7 +70,7 @@
 						%fieldset
 							%legend Stats
 							#monsterstats
-								= partial :monsterstats, :layout => false, :locals => { :stats => {} }
+								= partial :monsterstats, :layout => false, :locals => { :monsterclass => "Monster", :stats => {} }
 						%p
 							Number:
 							%select{ :name => 'monstercount' }

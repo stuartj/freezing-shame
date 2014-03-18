@@ -139,7 +139,7 @@ get('/monsterstats') do
     partial( :monsterstats, :layout => false, :locals => { :stats => {}})
   else
     monster = Monster.fromParams params
-    partial( :monsterstats, :layout => false, :locals => { :stats => monster.to_hash })
+    partial( :monsterstats, :layout => false, :locals => { :monsterclass => params["monsterclass"], :stats => monster.to_hash })
   end
 end
 

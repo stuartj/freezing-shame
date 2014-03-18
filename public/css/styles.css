@@ -17,6 +17,11 @@ body{
 	margin:20px;
 }
 
+.cultureandbackground, #attributes {
+	float:left;
+	width:auto;
+}
+
 #submit_button{
 	float:center;
 }
@@ -26,12 +31,6 @@ body{
 	text-align:center;
 }
 
-checkbox{
-	vertical-align: left;
-	width: 100px;
-	display: inline-block;}
-
-}
 
 label.monsterability {
 	font-family: sans-serif;
@@ -105,7 +104,6 @@ td{
 
 fieldset{
 	border:1px solid #999;
-	width:300px;
 	padding:5px;
 	margin:5px;
 }
