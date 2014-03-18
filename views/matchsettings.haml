@@ -1,22 +1,24 @@
 %fieldset
-	%legend Match Settings
-	%fieldset
-		%legend Iterations
-		%p
-			%input{ :type => "radio", :name => "iterations", :value => 0, :checked => true }
-				1 (Output blow-by-blow log.)
-		%p
-			%input{ :type => "radio", :name => "iterations", :value => 2, :checked => false }
-				100 (Output statistics)
-		%p
-			%input{ :type => "radio", :name => "iterations", :value => 4, :checked => false }
-				10,000 (Output statistics)
-	%fieldset
-		%legend Stance
-		%select{ :id => "stance", :name => "stance"}
-			-stances = ["Defensive","Open","Forward"]
-			-stances.size.times do |i|
-				%option{:value => "#{12-i*3}"}
-					=stances[i];
-	%input{ :type => "checkbox", :name => "sauron_rule", :checked => false}
+	%legend Iterations
+	%p
+		%input{ :type => "radio", :name => "iterations", :value => 0, :checked => true }
+			%label{ :title => "Output blow-by-blow combat log" }
+				Single match. 
+	%p
+		%input{ :type => "radio", :name => "iterations", :value => 2, :checked => false }
+			%label{ :title => "Output aggregate stats." }
+				Fight 100 times.
+	%p
+		%input{ :type => "radio", :name => "iterations", :value => 4, :checked => false }
+			%label{ :title => "10,000, to be exact. Output aggregate stats." }
+				Over 9,000!
+%fieldset
+	%legend Stance
+	%select{ :id => "stance", :name => "stance"}
+		-stances = ["Defensive","Open","Forward"]
+		-stances.size.times do |i|
+			%option{:value => "#{12-i*3}"}
+				=stances[i];
+%input{ :type => "checkbox", :name => "sauron_rule", :checked => false}
+	%label{ :title => "When Hero rolls a Sauron, opponent will try a called shot."}
 		"Called Shot on Sauron" Rule

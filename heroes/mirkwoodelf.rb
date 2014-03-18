@@ -40,9 +40,9 @@ class MirkwoodElf < Hero
   
   def self.rewardGearData
     [
-      { :base => :spear, :name => "Bitter Spear", :quality => :bitter },
-      { :base => :buckler, :name => "Spearman's Shield", :quality => :spearmans },
-      { :base => :bow, :name => "Woodland Bow", :quality => :woodland }
+      { :base => :spear, :name => "Bitter Spear", :quality => :bitter, :tooltip => "On G-roll, Injury rating increased by 4." },
+      { :base => :buckler, :name => "Spearman's Shield", :quality => :spearmans, :tooltip => "Can be used with two-handed weapons." },
+      { :base => :bow, :name => "Woodland Bow", :quality => :woodland, :tooltip => "Unimplemented." }
     ]
   end
   

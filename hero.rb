@@ -247,11 +247,11 @@ class Hero < Opponent
   def self.virtues 
     result = {}
     result[:confidence] = {:name => "Confidence", :implemented => false}
-    result[:dour_handed] = {:name => "Dour-handed", :implemented => true}
+    result[:dour_handed] = {:name => "Dour-handed", :tooltip => "Increase ranged damage by 1", :implemented => true}
     result[:expertise] = {:name => "Expertise", :implemented => false}
-    result[:fell_handed] = {:name => "Fell-handed", :implemented => true}
+    result[:fell_handed] = {:name => "Fell-handed", :tooltip => "Increase close combat damage by 1", :implemented => true}
     result[:gifted] = {:name => "Gifted", :implemented => false}
-    result[:resilience] = {:name => "Resilience", :implemented => true}
+    result[:resilience] = {:name => "Resilience", :tooltip => "Increase endurance by 3", :implemented => true}
     result
   end
   
@@ -259,21 +259,22 @@ class Hero < Opponent
     # problem....some qualities apply only to some armor items...
     # maybe compare qualities handled by item to qualities avaialble to character?
     result = {}
-    result[:cunning_make_armor] = {:type => "modifier", :name => "Cunning Make (Armor)", :implemented => true}
-    result[:cunning_make_shield] = {:type => "modifier", :name => "Cunning Make (Shield)", :implemented => true}
-    result[:cunning_make_helm] = {:type => "modifier", :name => "Cunning Make (Helm)", :implemented => true}
-    result[:close_fitting_armor] = {:type => "modifier", :name => "Close Fitting (Armor)", :implemented => true}
-    result[:close_fitting_helm] = {:type => "modifier", :name => "Close Fitting (Helm)", :implemented => true}
-    result[:reinforced] = { :type => "modifier", :name => "Reinforced (Shield)", :implemented => true}
-    result[:grievous] = {:type => "modifier", :name => "Grievous", :implemented => true}
-    result[:keen] = {:type => "modifier", :name => "Keen", :implemented => true}
-    result[:fell] = {:type => "modifier", :name => "Fell", :implemented => true}
+    result[:cunning_make_armor] = {:type => "modifier", :name => "Cunning Make (Armor)", :tooltip => "Reduce armor encumbrance by 2.", :implemented => true}
+    result[:cunning_make_shield] = {:type => "modifier", :name => "Cunning Make (Shield)", :tooltip => "Reduce shield encumbrance by 2.", :implemented => true}
+    result[:cunning_make_helm] = {:type => "modifier", :name => "Cunning Make (Helm)", :tooltip => "Reduce helm encumbrance by 2.", :implemented => true}
+    result[:close_fitting_armor] = {:type => "modifier", :name => "Close Fitting (Armor)", :tooltip => "Increase armor protection by 1D.", :implemented => true}
+    result[:close_fitting_helm] = {:type => "modifier", :name => "Close Fitting (Helm)", :tooltip => "Increase helm protection by +1", :implemented => true}
+    result[:reinforced] = { :type => "modifier", :name => "Reinforced", :tooltip => "Increase Parry by one; immune to Smash.", :implemented => true}
+    result[:grievous] = {:type => "modifier", :name => "Grievous", :tooltip => "Increase weapon damage by 2.", :implemented => true}
+    result[:keen] = {:type => "modifier", :name => "Keen", :tooltip => "Improve weapon edge rating by 1.", :implemented => true}
+    result[:fell] = {:type => "modifier", :name => "Fell", :tooltip => "Increase weapon injury rating by 2.", :implemented => true}
     
     if( self.superclass == Hero )
-      rg = self.rewardGear
-      rg.keys.each do | key |
-        item = rg[key]
-        result[key] = { :type => item.class.to_s, :name => item.name, :implemented => true }
+      rg = self.rewardGearData
+      rg.each do | item |
+        result[item[:base]] = item.dup
+#        item = rg[key]
+#        result[key] = { :type => item.class.to_s, :name => item.name, :implemented => true }
       end
     end
     result

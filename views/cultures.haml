@@ -3,5 +3,5 @@
 		%option{ :value => "None", :selected => true }
 			Pick a Culture...
 	-Hero.cultures.each do | c |
-		%option{ :value => "#{c.to_s}" }
+		%option{ :value => "#{c.to_s}" , :title=> "Testing"}
 			="#{c.cultureName}"

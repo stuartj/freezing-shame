@@ -57,15 +57,15 @@ class ShireHobbit < Hero
     result[:brave_at_a_pinch] = {:name => "Brave at a Pinch", :implemented => false}
     result[:fair_shot] = {:name => "Fair Shot", :implemented => false}
     result[:tough_in_the_fibre] = {:name => "Tough in the Fibre", :implemented => false}
-    result[:small_folk] = {:name => "Small Folk", :implemented => true}
+    result[:small_folk] = {:name => "Small Folk", :implemented => true, :tooltip => "Use Favoured Wits to compute Parry when fighting larger-than-hobbit-sized opponents."}
     result
   end
     
   def self.rewardGearData
     [
-      { :base => :bow, :name => "Bow of the North Downs", :quality => :north_downs },
-      { :base => :short_sword, :name => "King's Blade", :quality => :kings_blade },
-      { :base => :modifier, :name => "Lucky Armour", :quality => :lucky },
+      { :base => :bow, :name => "Bow of the North Downs", :quality => :north_downs, :tooltip => "Unimplemented." },
+      { :base => :short_sword, :name => "King's Blade", :quality => :kings_blade, :tooltip => "Automatic Pierce on Great or Extraordinary Success." },
+      { :base => :modifier, :name => "Lucky Armour", :quality => :lucky, :tooltip => "On Protection rolls, roll Feat die twice and keep higher."},
     ]
   end
   

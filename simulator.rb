@@ -145,6 +145,13 @@ post('/masterform') do
     puts key + ":" + params[key]
   end
   puts "**************************"
+  
+  ["monsterclass", "monstertype", "culture", "background"].each do |p|
+    if !params.include? p
+      return "<b>Please pick a culture, a background, and an opponent.</b>"
+    end
+  end
+  
   token = FightRecord.generate_token
   hero = Hero.fromParams params
   h = hero.to_hash

@@ -2,13 +2,12 @@
 					
 %fieldset.checkboxes{ :culture=>"#{culture}" }
 	%legend Rewards
-	- i = 0
 	- rewards = heroclass.rewards
 	- rewards.keys.each do | r |
 		%p
 		%input{:name => r, :type=>"checkbox", :culture=>culture, :reward_type => rewards[r][:type], :disabled => !rewards[r][:implemented], :onchange=>"updateRewards(this)"}
-			= rewards[r][:name]
-		-i += 1
+			%label{ :title => rewards[r][:tooltip] }
+				= rewards[r][:name]
 	
 %fieldset.checkboxes
 	%legend Virtues
@@ -16,8 +15,9 @@
 	- virtues.keys.each do | v |
 		%p
 		-if virtues[v][:implemented]
-			%input{:type=>"checkbox", :name=>"#{v}"}
-				= virtues[v][:name]
+			%input{:type=>"checkbox", :name=>v }
+				%label{ :title => virtues[v][:tooltip] }
+					= virtues[v][:name] 
 
 
 

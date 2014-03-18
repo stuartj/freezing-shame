@@ -1,5 +1,6 @@
 !!!
 %script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js")
+%script( src="//code.jquery.com/ui/1.10.4/jquery-ui.js" )
 
 //%script(src="//code.jquery.com/jquery-latest.min.js")
 //%script(src="/jquery-2.1.-.min.js")
@@ -12,7 +13,7 @@
 %html
 	%head
 		%title Middle Earth Death Match
-		%link(rel="stylesheet" href="http://yui.yahooapis.com/2.8.0r4/build/reset/reset-min.css")
+		%link(rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css")
 		%link(rel="stylesheet" href="css/styles.css")
 		
 	%body
@@ -29,7 +30,8 @@
 						%legend
 							Hero
 						%p
-							Culture:
+							%label
+								Culture:
 							#cultures
 								= partial :cultures, :layout => false, :locals => { :culture => "None"}		
 						%p
@@ -49,7 +51,10 @@
 						= partial :gear, :layout => "false", :locals => { :culture => "Hero" }
 							
 				#matchsettings
-					= partial :matchsettings, :layout => false
+					%fieldset
+						%legend General Settings
+						= partial :matchsettings, :layout => false
+					
 				#monster		
 					%fieldset
 						%legend Opponent

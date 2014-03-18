@@ -9,6 +9,12 @@ $("#masterform").submit(function( event ) {
   	});
 });
 
+$(function() {
+  $( document ).tooltip();
+});
+
+
+
 function setCulture(select) {
 	updateFormElement(select, 'backgrounds');
 	updateFormElement(select, 'feats');

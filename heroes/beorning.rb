@@ -26,10 +26,10 @@ class Beorning < Hero
   
   def self.rewardGearData
     [
-      {:base => :great_spear, :name => "Giant Slaying Spear", :quality => :giant_slaying},
-      {:base => :great_axe, :name => "Splitting Axe (Great)", :quality => :splitting},
-      {:base => :axe, :name => "Splitting Axe", :quality => :splitting},
-      {:base => :leather_corslet, :name => "Noble Armour", :quality => :noble}
+      {:base => :great_spear, :name => "Giant Slaying Spear", :quality => :giant_slaying, :tooltip => "+4 Damage vs. larger-than-human-sized opponents."},
+      {:base => :great_axe, :name => "Splitting Axe (Great)", :quality => :splitting, :tooltip => "On G-roll, opponent rolls one fewer protection dice."},
+      {:base => :axe, :name => "Splitting Axe", :quality => :splitting, :tooltip => "On G-roll, opponent rolls one fewer protection dice."},
+      {:base => :leather_corslet, :name => "Noble Armour", :quality => :noble, :tooltip => "Unimplemented"}
     ]
   end   
   

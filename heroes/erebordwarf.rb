@@ -26,7 +26,7 @@ class EreborDwarf < Hero
     end
     result
   end
-  
+    
   def self.rewardGearData
     [
       { :base => :great_axe, :name => "Axe of the Azanulbizar", :quality => :azanulbizar}, 

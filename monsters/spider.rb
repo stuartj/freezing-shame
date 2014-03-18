@@ -13,6 +13,7 @@ class Spider < Monster
     result[:attribute_beak] = Weapon.new("Beak", 0, 8, 18, 0, :attribute, :poison )
     result[:stomp] = Weapon.new("Stomp", 0, 12, 14, 0, :attribute, :knockdown )
     result[:beak] = Weapon.new("Beak", 6, 12, 15, 0, :body, :poison )
+    result[:ensnare] = Weapon.new("Ensnare", 0, 0, 0, 0, :body, :unimplemented )
     result
   end
   

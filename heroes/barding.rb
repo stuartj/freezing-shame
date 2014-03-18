@@ -19,9 +19,9 @@ class Barding < Hero
   
   def self.rewardGearData 
     [
-      { :base => :great_bow, :name => "Dalish Longbow", :quality => :dalish },
-      { :base => :spear, :name => "Spear of King Bladorthin", :quality => :bladorthin },
-      { :base => :great_shield, :name => "Tower Shield", :quality => :tower }
+      { :base => :great_bow, :name => "Dalish Longbow", :quality => :dalish, :tooltip => "On G-roll, protection roll is worst of two Feat dice." },
+      { :base => :spear, :name => "Spear of King Bladorthin", :quality => :bladorthin, :tooltip => "Unimplemented" },
+      { :base => :great_shield, :name => "Tower Shield", :quality => :tower, :tooltip => "Unimplemented" }
       ]
   end
   

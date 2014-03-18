@@ -27,6 +27,31 @@ class Monster < Opponent
     @special_abilities = 0 #bit mask
   end
   
+  def self.abilities
+    {
+      :horrible_strength => { :name => "Horrible Strength", :tooltip => "Spend hate to increase damage by attribute-level. (50% chance per hit.)" },
+      :hideous_toughness => { :name => "Hideous Toughness", :tooltip => "Spend hate to reduce damage by attribute-level"},
+      :great_size => { :name => "Great Size", :tooltip => "Requires two wounds, or one wound and zero endurance, to kill."},
+      :hate_sunlight => { :name => "Hate Sunlight", :tooltip => "Unimplemented."},
+      :savage_assault => { :name => "Savage Assault", :tooltip => "On great or extraordinary success, roll second attack with alternate weapon."},
+      :seize_victim => { :name => "Sieze Victim", :tooltip => "Unimplemented."},
+      :thick_hide => { :name => "Thick Hide", :tooltip => "When making a Protection test, on great or extraordinary success attacker is disarmed."},
+      :thing_of_terror => { :name => "Thing of Terror", :tooltip => "Unimplemented."},
+      :denizen_of_the_dark => { :name => "Denizen of the Darkness", :tooltip => "Unimplemented."},
+      :snake_like_speed => { :name => "Snake-like Speed", :tooltip => "On being hit, spend Hate to retroactively increase Parry by attribute level."},
+      :strike_fear => { :name => "Strike Fear", :tooltip => "Unimplemented."},
+      :craven => { :name => "Craven", :tooltip => "Will attempt to flee if Hate reduced to zero."},
+      :bewilder => { :name => "Bewilder", :tooltip => "Unimplemented."},
+      :commanding_voice => { :name => "Commanding Voice", :tooltip => "Unimplemented."},
+      :great_leap => { :name => "Great Leap", :tooltip => "Unimplemented."},
+      :mirkwood_dweller => { :name => "Mirkwood Dweller", :tooltip => "Unimplemented."},
+      :dreadful_spells => { :name => "Dreadful Spells", :tooltip => "Unimplemented."},
+      :hatred => { :name => "Hatred", :tooltip => "Unimplemented."}
+
+#      :symbol => { :name => "", :tooltip => "Unimplemented."},
+    }
+  end
+  
   def self.fromParams params
     monsterClass = (Object.const_get(params[:monsterclass]));
     m = monsterClass.createType params[:monstertype]
@@ -87,7 +112,7 @@ class Monster < Opponent
 #      "Secondary Weapon" => ( @secondary_weapon ? @secondary_weapon.to_s : "None"),
       "Protection" => self.protection[0].to_s + "d +" + self.protection[1].to_s,
       "Parry" => self.parry,
-      "Special Abilities" => @abilities.join(',')
+      "Special Abilities" => @abilities.keys.join(',')
     }
   end
   
@@ -106,7 +131,7 @@ class Monster < Opponent
     puts typeSymbol
     type = self.class.types[typeSymbol.to_sym]
     @name = type[:name]
-    @abilities = type[:abilities].dup  #.collect{|x| x.to_sym} 
+    @abilities = Hash[type[:abilities].collect{ |k| [k,Monster.abilities[k]]}] # yikes. take array of symbols and build hash
     @attribute_level = type[:attribute_level]
     @max_hate = type[:hate]
     @max_endurance = type[:endurance]
@@ -151,7 +176,7 @@ class Monster < Opponent
   
   def rollProtectionAgainst opponent
     super
-    if( @abilities.include? :thick_hide ) && @dice.tengwars > 0
+    if( @abilities.keys.include? :thick_hide ) && @dice.tengwars > 0
       opponent.conditions.add :disarmed
       FightRecord.addEvent( @token, self.name, :hate, nil, :thick_hide )
       FightRecord.addEvent( @token, opponent.name, :disarmed, nil, nil )
@@ -236,7 +261,7 @@ class Monster < Opponent
   end
   
   def hit_by? opponent, dice
-    if( @abilities.include? :snake_like_speed )
+    if( @abilities.keys.include? :snake_like_speed )
       tn = opponent.tnFor self
       d = dice.total
       if (d > tn) && ((d - tn) < (self.parry opponent))
