@@ -280,6 +280,10 @@ class Opponent
 
   end
   
+  def tnFor opponent
+    0 # implemented by subclasses
+  end
+  
   
   def hit? opponent
     (@dice.test self.tnFor opponent) && (opponent.hit_by? self, @dice )

@@ -20,10 +20,33 @@ class ShireHobbit < Hero
   def parry opponent=nil
     p = super
     if(opponent && (opponent.size > 1) && (@feats.include? :small_folk))
-      puts "Small Folk triggered"
       return p + @f_wits
     end
     p
+  end
+  
+  def rollProtectionAgainst opponent
+    if( @armor.qualities.include? :lucky)
+      tn = opponent.weaponInjury
+      self.dice.roll( self.protection[0], self.weary?, 1 )
+      self.dice.bonus = self.protection[1]
+      FightRecord.addEvent( @token, self.name, :pierce, nil, nil )
+      FightRecord.addEvent( @token, self.name, :armor_check, @dice, tn )
+      test = @dice.test tn
+      if !test
+        self.wound
+      end      
+    else
+      super
+    end
+  end
+  
+  def fromParams params
+    result = super
+    if( params.keys.include? "lucky" )
+      @armor.qualities.add :lucky
+    end
+    result
   end
   
 

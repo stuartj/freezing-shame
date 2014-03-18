@@ -39,10 +39,7 @@ class Equipment
 #    puts self.class.to_s + " receives quality: " + symbol.to_s
   end    
   
-  def encumbrance
-    @encumbrance
-  end
-  
+
   def self.to_sym
     :equipment
   end

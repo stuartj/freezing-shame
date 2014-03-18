@@ -46,7 +46,7 @@ class Monster < Opponent
   
   def weaponDamage
     damage = super
-    if( (@abilities.include? :horrible_strength) && @hate > 0)
+    if( (@abilities.include? :horrible_strength) && @hate > 0 && (rand() < 0.5) )
       damage += @attribute_level
         FightRecord.addEvent( @token, self.name, :hate, nil, :horrible_strength.to_s )
       self.spendHate

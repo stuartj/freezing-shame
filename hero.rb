@@ -35,21 +35,26 @@ class Hero < Opponent
 #    end
     heroClass = (Object.const_get(params[:culture]));
     hero = heroClass.new
-    background = hero.class.backgrounds[params[:background].to_sym] # need some error checking on this one
-    hero.name = "Hero"
-    hero.body = background[:body]
-    hero.heart = background[:heart]
-    hero.wits = background[:wits]
-    hero.weapon = params[:weapon].to_sym
-    hero.armor = params[:armor].to_sym
-    hero.shield = params[:shield].to_sym
-    hero.helm = params[:helm].to_sym
-    hero.weapon_skill = params[:Weapon_skill].to_i
-    hero.stance = params[:stance].to_i
-    hero.class.virtues.keys.each do |v|
+    
+    hero.fromParams params
+  end
+  
+  def fromParams params
+    @name = "Hero"
+    background = self.class.backgrounds[params[:background].to_sym] # need some error checking on this one
+    @body = background[:body]
+    @heart = background[:heart]
+    @wits = background[:wits]
+    self.weapon = params[:weapon].to_sym
+    self.armor = params[:armor].to_sym
+    self.shield = params[:shield].to_sym
+    self.helm = params[:helm].to_sym
+    @weapon_skill = params[:Weapon_skill].to_i
+    @stance = params[:stance].to_i
+    self.class.virtues.keys.each do |v|
 #      puts "Virtue Key: " + v.to_s
       if params.keys.include? v.to_s
-        hero.addVirtue v
+        self.addVirtue v
 #        puts "Virtue found: " + v.to_s
       end
     end
@@ -58,19 +63,19 @@ class Hero < Opponent
       tag = "favoured_attribute_" + (i + 1).to_s
       case params[tag.to_sym]
       when "body"
-        hero.f_body = i + 1
+        @f_body = i + 1
       when "wits"
-        hero.f_wits = i + 1
+        @f_wits = i + 1
       when "heart"
-        hero.f_heart = i + 1
+        @f_heart = i + 1
       end
     end
     
-    hero.armor.addParams params
-    hero.shield.addParams params
-    hero.weapon.addParams params
-    hero.helm.addParams params
-    hero
+    self.armor.addParams params
+    self.shield.addParams params
+    self.weapon.addParams params
+    self.helm.addParams params
+    self
   end
   	
   
@@ -200,7 +205,7 @@ class Hero < Opponent
   end
   
   def encumbrance
-    @armor.encumbrance + @helm.encumbrance + @shield.encumbrance + @weapon.encumbrance
+    self.armor.encumbrance + self.helm.encumbrance + self.shield.encumbrance + self.weapon.encumbrance
   end
   
   def maxEndurance
