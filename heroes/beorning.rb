@@ -7,7 +7,6 @@ class Beorning < Hero
     
   def initialize
     super
-    puts "Beorning initalizing"
   end
   
   def self.virtues #modifiers applied to self

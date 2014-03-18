@@ -23,7 +23,6 @@ class Opponent
   end
   
   def initialize
-    puts "Opponent intializing"
     @conditions = Set.new
     @called_shot = false
     @size = 3 # default size

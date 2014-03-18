@@ -101,14 +101,11 @@ get('/response'){  "Hello from the server" }
 get('/time'){ "The time is " + Time.now.to_s }
 
 post('/setculture') do
-  puts "Set culture fired!"
-  puts params
   partial( :heroform, :layout => false, :locals => {:culture=>params["culture"], :params=>params } )
   #"[Foo, Bar, Baz]"
 end
 
 get('/monstertype') do
-  puts params
   partial( :monstertype, :layout => false, :locals => {:monsterclass => params["monsterclass"]})
 end
 
@@ -144,14 +141,9 @@ get('/monsterstats') do
 end
 
 post('/masterform') do
-  puts "*************************"
-  params.keys.each do |key|
-    puts key + ":" + params[key]
-  end
-  puts "**************************"
   
   ["monsterclass", "monstertype", "culture", "background"].each do |p|
-    if !params.include? p
+    if (!params.include? p) || (params[p] == "None" )
       return "<b>Please pick a culture, a background, and an opponent.</b>"
     end
   end
@@ -159,9 +151,6 @@ post('/masterform') do
   token = FightRecord.generate_token
   hero = Hero.fromParams params
   h = hero.to_hash
-  h.keys.each do |key|
-    puts key + " : " + h[key].to_s
-  end
   hero.token = token
   monstercount = params["monstercount"].to_i
   monsters = []
@@ -185,14 +174,8 @@ post('/masterform') do
 end
 
 post('/sethero') do
-  puts "Set hero fired! Values:"
-  params.keys.each do |key|
-    puts key.to_s + "(" + key.class.to_s + ") : " + params[key]
-  end
-  iterations = params[:iterations].to_i
-  puts "Iterations: " + iterations.to_s
+ iterations = params[:iterations].to_i
   hero = Hero.fromParams params
-  puts "Hero: " + hero.to_s
   deathmatch( hero, (Spider.createType :tauler, :beak), iterations )  
 end
 
@@ -200,14 +183,10 @@ end
 
 
 post('/setbackground') do
-  puts "Set backbround fired!"
-  puts "Background: " + params.to_s
   partial( :weaponform, :layout => false, :locals => { :background => params[:background], :culture => params[:culture], :params => params} )
 end
 
 post('/setfeatsandbackground') do
-  puts "Set feats fired!"
-  puts "Feats: " + params.to_s
   partial( :weaponform, :layout => false, :locals => {:culture => params[:culture], :params => params} )
 end
 

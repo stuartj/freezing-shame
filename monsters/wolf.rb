@@ -68,6 +68,7 @@ class Wolf < Monster
     
     result[:werewolf_of_mirkwood] = { 
       :name => "Werewolf of Mirkwood", 
+      :unique => true,
       :attribute_level => 8, 
       :size => 3, 
       :endurance => 68, 

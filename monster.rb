@@ -13,14 +13,14 @@ class Monster < Opponent
   
   attr_accessor :attribute_level, :parry, :hate, :abilities
   attr_accessor :max_hate, :max_endurance
-  attr_accessor :sauron_rule
+  attr_accessor :sauron_rule, :unique
     
   def initialize
     super
-    puts "Monster initializing"
     @parry = 0
     @attribute_level = 1
     @abilities = {}
+    @unique = false
     @sauron_rule = false
     @hate = 1
     @current_weapon_index = 0
@@ -62,11 +62,9 @@ class Monster < Opponent
   
   def confirmAbilities params
     symbols = params.keys.collect{|k| k.to_sym }
-    puts symbols.to_s
     @abilities.keys.each do | a |
       if !(symbols.include? a)
         @abilities.delete a
-        puts "Ability removed: " + a.to_s
       end
     end
   end
@@ -109,6 +107,7 @@ class Monster < Opponent
       "Attribute Level" => self.attribute_level,
       "Endurance" => self.maxEndurance,
       "Hate" => self.max_hate,
+#      "Unique" => self.unique.to_s,
       "Weapon Skill" => self.weapon_skill,
       "Weapon" => self.weapon.to_s,
 #      "Secondary Weapon" => ( @secondary_weapon ? @secondary_weapon.to_s : "None"),
@@ -130,12 +129,14 @@ class Monster < Opponent
   end
   
   def initFromType typeSymbol, weapon=nil
-    puts typeSymbol
     type = self.class.types[typeSymbol.to_sym]
     @name = type[:name]
     @abilities = Hash[type[:abilities].collect{ |k| [k,Monster.abilities[k]]}] # yikes. take array of symbols and build hash
     @attribute_level = type[:attribute_level]
     @max_hate = type[:hate]
+    if type.include? :unique
+      @unique = type[:unique]
+    end
     @max_endurance = type[:endurance]
     @armor = type[:armor]
     @size = type[:size]

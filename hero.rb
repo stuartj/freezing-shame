@@ -15,7 +15,6 @@ class Hero < Opponent
   
   def initialize
     super
-    puts "Hero intializing"
     @body = 0
     @wits = 0
     @heart = 0
@@ -110,10 +109,8 @@ class Hero < Opponent
   
   
   def self.gear type = nil, reward_symbol = nil
-    puts "Type: " + type.to_s + " Symbol: " + reward_symbol.to_s
 
     if @@gear.size == 0
-      puts "Initialize master gear list"
       @@gear[:dagger] = Weapon.new( "Dagger", 3, 12, 12, 0, :one_handed, nil );
       @@gear[:short_sword] = Weapon.new( "Short Sword", 5, 10, 14, 1, :one_handed, nil)
       @@gear[:sword] = Weapon.new("Sword", 5, 10, 16, 2, :one_handed, nil)
