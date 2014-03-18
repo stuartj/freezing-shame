@@ -13,7 +13,10 @@ $(function() {
   $( document ).tooltip();
 });
 
-
+function setMonsterFamily(select) {
+	updateFormElement( select, 'monstertype' );
+	updateFormElement( select, 'monsterstats' );
+}
 
 function setCulture(select) {
 	updateFormElement(select, 'backgrounds');

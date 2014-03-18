@@ -135,8 +135,12 @@ get('/feats') do
 end
 
 get('/monsterstats') do
-  monster = Monster.fromParams params
-  partial( :monsterstats, :layout => false, :locals => { :stats => monster.to_hash })
+  if !params.include? 'monstertype'
+    partial( :monsterstats, :layout => false, :locals => { :stats => {}})
+  else
+    monster = Monster.fromParams params
+    partial( :monsterstats, :layout => false, :locals => { :stats => monster.to_hash })
+  end
 end
 
 post('/masterform') do

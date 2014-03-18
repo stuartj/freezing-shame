@@ -35,6 +35,7 @@ class Monster < Opponent
       :hate_sunlight => { :name => "Hate Sunlight", :tooltip => "Unimplemented."},
       :savage_assault => { :name => "Savage Assault", :tooltip => "On great or extraordinary success, roll second attack with alternate weapon."},
       :seize_victim => { :name => "Sieze Victim", :tooltip => "Unimplemented."},
+      :fear_of_fire => { :name => "Fear of Fire", :tooltip => "Unimplemented."},
       :thick_hide => { :name => "Thick Hide", :tooltip => "When making a Protection test, on great or extraordinary success attacker is disarmed."},
       :thing_of_terror => { :name => "Thing of Terror", :tooltip => "Unimplemented."},
       :denizen_of_the_dark => { :name => "Denizen of the Darkness", :tooltip => "Unimplemented."},

@@ -1,4 +1,4 @@
-%select{ :name => "monsterclass", :onchange => "updateFormElement( this, 'monstertype' )" }
+%select{ :name => "monsterclass", :onchange => "setMonsterFamily( this )" }
 	%option{ :value => "None" }
 		Choose a Category...
 	-Monster.monsters.each do |m|
