@@ -47,7 +47,7 @@ class Monster < Opponent
       :great_leap => { :name => "Great Leap", :tooltip => "Unimplemented."},
       :mirkwood_dweller => { :name => "Mirkwood Dweller", :tooltip => "Unimplemented."},
       :dreadful_spells => { :name => "Dreadful Spells", :tooltip => "Unimplemented."},
-      :hatred => { :name => "Hatred", :tooltip => "Unimplemented."}
+      :hatred => { :name => "Hatred", :tooltip => "Unimplemented."},
 
 #      :symbol => { :name => "", :tooltip => "Unimplemented."},
     }

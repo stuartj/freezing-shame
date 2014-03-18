@@ -17,6 +17,16 @@ class Spider < Monster
     result
   end
   
+  def self.abilities
+    result = super
+    result[:foul_reek] = { :name => "Foul Reek", :tooltip => "Unimplemented."}
+    result[:countless_children] = { :name => "Countless Children", :tooltip => "Unimplemented."}
+    result[:webs_of_illusion] = { :name => "Webs of Illusion", :tooltip => "Unimplemented."}
+    result[:many_poisons] = { :name => "Many Poisons", :tooltip => "Unimplemented."}
+    result
+  end
+    
+  
   def self.types
     result = {}
     result[:attercop] = { :name => "Attercop", :attribute_level => 4, :size => 1, :endurance => 12, :hate => 2, :parry => 4, :armor => 2, :shield => 0, :weapons => [{ :type=>:sting,:skill => 2}], :abilities => [:great_leap, :seize_victim] }

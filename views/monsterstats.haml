@@ -3,9 +3,10 @@
 		-if key != "Special Abilities"
 			=key + ": " + stats[key].to_s
 -if stats.include? "Special Abilities"
+	-m=(Object.const_get(monsterclass))
 	-stats["Special Abilities"].split(',').each do |s|
 		%p
 			%input{ :type => "checkbox", :name => s, :checked => true }
-				%label.monsterability{ :title => Monster.abilities[s.to_sym][:tooltip] }
-					=Monster.abilities[s.to_sym][:name]
+				%label.monsterability{ :title => m.abilities[s.to_sym][:tooltip] }
+					=m.abilities[s.to_sym][:name]
 
