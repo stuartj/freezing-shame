@@ -8,31 +8,32 @@ Dir["./heroes/*"].each {|file| require file }
 
 
 
-def deathmatch( opponent1, opponent2, iterations )
-  resultString = nil
-  playerWins = 0
-  stats = []
+def deathmatch( hero, bunchOfMonsters, iterations )
   iterations.times do | i |
-    FightRecord.newFight opponent1.token
-    opponent1.reset
-    opponent2.reset
-    
-#    if i==(iterations-1)
-#      resultString = ""
-#    end
-    if( rand(2) == 1 )
-      stats.push opponent1.takeTurn( opponent2 )
-    else
-      stats.push opponent2.takeTurn( opponent1 )
+    FightRecord.newFight hero.token
+    hero.reset
+    bunchOfMonsters.each do | m |
+      m.reset
     end
-    if opponent1.alive?
-      playerWins+=1
+    
+    monsters = bunchOfMonsters.dup
+
+    if( rand(2) == 1 )
+      hero.attack( monsters )
+    end
+        
+    while( hero.alive? && monsters.size > 0 )
+      monsters.each do | m |
+        m.attack( hero )
+        if !hero.alive?
+          break
+        end
+      end
+      if hero.alive?
+        hero.attack( monsters )
+      end
     end
   end
-#  resultString += "<p> Player wins: " + (playerWins * 100.0 / iterations).round(1).to_s + "%."
-#  resultString
-
-# if run once, return combat log as text
 end
 
 def statsToHtml compiledStats
@@ -151,11 +152,17 @@ post('/masterform') do
     puts key + " : " + h[key].to_s
   end
   hero.token = token
-  monster = Monster.fromParams params
-  monster.confirmAbilities params # can't do this inside constructor
-  monster.token = token
+  monstercount = params["monstercount"].to_i
+  monsters = []
+  monstercount.times do |i|
+    monster = Monster.fromParams params
+    monsters.push monster
+    monster.name = monster.name + (i+1).to_s
+    monster.confirmAbilities params # can't do this inside constructor
+    monster.token = token
+  end
   iterations = 10**(params["iterations"].to_i)
-  deathmatch( hero, monster, iterations  )  
+  deathmatch( hero, monsters, iterations  )  
   
   if iterations == 1
     return (FightRecord.lastFightFor token).to_html   # turn this into a partial at some point

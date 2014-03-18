@@ -65,6 +65,12 @@
 							%legend Stats
 							#monsterstats
 								= partial :monsterstats, :layout => false, :locals => { :stats => {} }
+						%p
+							Number:
+							%select{ :name => 'monstercount' }
+								-10.times do |i|
+									%option{ :value => i + 1}
+										=(i + 1).to_s
 				#submit_button
 					= partial :submit_button, :layout => false, :locals => { :title => "Fight!" }
 						

@@ -128,6 +128,10 @@ class FightRecord
         else
           result += event[:player] + " uses its <b><i>" + event[:value].to_s + "</i></b>"
         end
+      when :disarmed
+        result += event[:player] + " is <b>disarmed</b>!"
+      when :skip
+        result += event[:player] + " misses a turn."
       when :out_of_hate
         result += event[:player] + " --is out of Hate!"
       when :called_shot

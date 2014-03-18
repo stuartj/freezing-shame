@@ -7,7 +7,7 @@
 	%head
 		%title Middle Earth Death Match
 		%link(rel="stylesheet" href="http://yui.yahooapis.com/2.8.0r4/build/reset/reset-min.css")
-		%link(rel="stylesheet" href="css/styles.css")
+		%link(rel="stylesheet" href="css/styles.css" onmouseover=)
 		
 		@@index
 		%form#reverse(action="/reverse" method="POST")

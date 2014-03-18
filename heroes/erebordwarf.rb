@@ -10,6 +10,13 @@ class EreborDwarf < Hero
   end
   
   
+  def hit opponent
+    if @dice.gandalf? && (@weapon.qualities.include? :azanulbizar)
+      opponent.conditions.add :weary
+    end
+    super
+  end
+  
   def self.gear type=nil, symbol=nil
     result = super
     puts result.size.to_s

@@ -21,6 +21,22 @@ class MirkwoodElf < Hero
     # super + [:deadly_archery, :elvish_dreams, :shadow_bane, :the_speakers, :woodelf_magic ] 
   end
   
+  def weaponInjury
+    if @dice.gandalf? && (@weapon.qualities.include :bitter)
+      super + 4
+    else
+      super
+    end
+  end
+  
+  def shieldValue
+    if @shield && (@shield.qualities.include? :spearmans)
+      @shield.value
+    else
+      super
+    end
+  end
+  
   
   def self.rewardGearData
     [

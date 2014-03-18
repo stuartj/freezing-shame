@@ -202,8 +202,9 @@ class Opponent
   def rollProtectionAgainst opponent
     tn = opponent.weaponInjury
     mod = (opponent.dice.gandalf? && opponent.weapon.hasQuality?( :dalish ) ? -1 : 0 )
-    self.dice.roll( self.protection[0], self.weary?, mod )
-    self.dice.bonus = self.protection[1]
+    prot = self.protection opponent
+    self.dice.roll( prot[0], self.weary?, mod )
+    self.dice.bonus = prot[1]
     FightRecord.addEvent( @token, self.name, :pierce, nil, nil )
     FightRecord.addEvent( @token, self.name, :armor_check, @dice, tn )
     test = @dice.test tn
@@ -212,7 +213,7 @@ class Opponent
     end
   end
   
-  def protection
+  def protection opponent=nil
     [(@armor ? @armor.value : 0), 0]
   end
   
@@ -259,11 +260,6 @@ class Opponent
       damage += opponent.damageBonus
     end
     self.takeDamage opponent, damage
-    opponent.hit self #just in case there are secondary actions
-  end
-  
-  def hit opponent
-    # don't do anything extra; override in subclasses
   end
   
   def post_hit opponent
@@ -293,10 +289,43 @@ class Opponent
     true # potentially overriden by subclasses
   end
     
-
+  def hit opponent
+    if( @called_shot )
+      FightRecord.addEvent( @token, self.name, :called_shot, nil, nil )
+      if @dice.tengwars > 0
+        opponent.getHitBy self 
+        opponent.wound 
+      end
+      @called_shot = false
+    else
+      opponent.getHitBy self      
+    
+      if (self.weapon.hasQuality?(:kings_blade) && (self.dice.tengwars > 0))
+        opponent.wound 
+      elsif @dice.feat >= self.weapon.edge
+        opponent.rollProtectionAgainst self 
+      end
+    end
+    self.post_hit opponent  # just in case there are post hit actions   
+  end
   
   # if opponent is still alive will attack back
   def attack( opponent)
+    
+    # skip turn if disarmed
+    if @conditions.include? :disarmed
+      @conditions.delete :disarmed
+      FightRecord.addEvent( @token, self.name, :skip, nil, nil )
+      return
+    end
+    
+    if( opponent.is_a? Array )
+      self.attack( opponent.last )
+      if( !opponent.last.alive? )
+        opponent.pop
+      end
+      return
+    end
     
     self.roll( self.weapon_skill )
     
@@ -309,28 +338,17 @@ class Opponent
     FightRecord.addEvent( @token, self.name, :attack, @dice.clone, tn )
     
     if( self.hit? opponent ) # give opponent one last chance to avoid...
-      if( @called_shot )
-        FightRecord.addEvent( @token, self.name, :called_shot, nil, nil )
-        if @dice.tengwars > 0
-          opponent.getHitBy self 
-          opponent.wound 
-        end
-        @called_shot = false
-      else
-        opponent.getHitBy self      
-      
-        if (self.weapon.hasQuality?(:kings_blade) && (self.dice.tengwars > 0))
-          opponent.wound 
-        elsif @dice.feat >= self.weapon.edge
-          opponent.rollProtectionAgainst self 
-        end
-      end
-      self.post_hit opponent  # just in case there are post hit actions
+      self.hit opponent
     end
-  end
     
-  def takeTurn opponent, nest=0
-    self.attack( opponent )
+    if !opponent.alive?
+      FightRecord.addEvent( @token, opponent.name, :dies, nil )
+    end 
+  end
+  
+  #deprecated  
+  def takeTurn opponent, nest=0 
+    self.attack( (opponent.is_a? Array) ? opponent.last : opponent )
     
     if( opponent.alive? )
       opponent.takeTurn( self, nest+1 )

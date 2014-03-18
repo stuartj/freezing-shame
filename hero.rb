@@ -330,10 +330,15 @@ class Hero < Opponent
   end
   
   def parry opponent=nil
-    ((@conditions.include? :bewildered) ? 0 : self.wits) + ((@shield && self.weapon.allows_shield?) ? @shield.value : 0 )
+    ((@conditions.include? :bewildered) ? 0 : self.wits) + self.shieldValue
   end
   
-  def protection
+  def shieldValue
+    ((@shield && self.weapon.allows_shield?) ? @shield.value : 0 )
+  end
+  
+  
+  def protection opponent=nil
     [(@armor ? @armor.value : 0), (@helm ? @helm.value : 0)]
   end
   

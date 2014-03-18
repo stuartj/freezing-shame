@@ -149,6 +149,16 @@ class Monster < Opponent
     end
   end
   
+  def rollProtectionAgainst opponent
+    super
+    if( @abilities.include? :thick_hide ) && @dice.tengwars > 0
+      opponent.conditions.add :disarmed
+      FightRecord.addEvent( @token, self.name, :hate, nil, :thick_hide )
+      FightRecord.addEvent( @token, opponent.name, :disarmed, nil, nil )
+    end
+  end
+  
+  
   def weapon_skill
     if @weapons && @weapons.size > 0
       @weapons[@current_weapon_index][:skill]
@@ -203,8 +213,12 @@ class Monster < Opponent
      @shield
    end
   
-   def protection
-     [@armor, 0]
+   def protection opponent=nil
+     if opponent && (opponent.weapon.qualities.include? :splitting) && (opponent.dice.gandalf?)
+       [@armor-1,0]
+     else
+       [@armor, 0]
+     end
    end
       
   
